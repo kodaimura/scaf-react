@@ -3,16 +3,34 @@ import { useAuth } from "./contexts/AuthContext";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
 import Dashboard from "./pages/dashboard/Dashboard";
+import { useEffect, useState } from "react";
+import { api } from "./lib/api";
 
 function PrivateRoute({ children }: { children: React.ReactElement }) {
-  const { account } = useAuth();
+  const { account, setAccount } = useAuth();
+  const [loading, setLoading] = useState(true);
 
-  if (!account) {
-    return <Navigate to="/login" replace />;
-  }
+  useEffect(() => {
+    const fetchAccount = async () => {
+      try {
+        const res = await api.get<{ account: any }>("/accounts/me");
+        setAccount(res.account);
+      } catch {
+        setAccount(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccount();
+  }, [setAccount]);
+
+  if (loading) return <div>Loading...</div>;
+  if (!account) return <Navigate to="/login" replace />;
 
   return children;
 }
+
 
 export default function AppRouter() {
   return (

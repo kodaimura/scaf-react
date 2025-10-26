@@ -25,20 +25,37 @@ interface FetchOptions {
 
 export class Api {
   private url: string;
+  private accessToken: string | null = null;
+  private onAccessTokenRefresh?: (token: string) => void;
 
-  constructor(url: string) {
+  constructor(url: string, onAccessTokenRefresh?: (token: string) => void) {
     this.url = url;
+    this.onAccessTokenRefresh = onAccessTokenRefresh;
+  }
+
+  setAccessToken(token: string | null) {
+    this.accessToken = token;
+  }
+
+  setAccessTokenCallback(callback: (token: string) => void) {
+    this.onAccessTokenRefresh = callback;
   }
 
   private async createFetchOptions(
     method: HttpMethod,
     body?: Record<string, unknown> | null
   ): Promise<FetchOptions> {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+
+    if (this.accessToken) {
+      headers["Authorization"] = `Bearer ${this.accessToken}`;
+    }
+
     const options: FetchOptions = {
       method,
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       credentials: "include",
     };
 
@@ -87,7 +104,6 @@ export class Api {
     }
 
     if (response.status === 204) {
-      // No Content
       return {} as T;
     }
 
@@ -104,7 +120,18 @@ export class Api {
         credentials: "include",
       });
 
-      return response.ok;
+      if (!response.ok) return false;
+
+      const newToken = (await response.json()).access_token;
+      if (newToken) {
+        this.accessToken = newToken;
+
+        if (this.onAccessTokenRefresh) {
+          this.onAccessTokenRefresh(newToken);
+        }
+      }
+
+      return true;
     } catch {
       return false;
     }
