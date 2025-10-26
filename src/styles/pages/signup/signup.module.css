@@ -69,3 +69,14 @@
 .link:hover {
   text-decoration: underline;
 }
+
+.error {
+  color: #b91c1c;
+  background-color: #fee2e2;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
