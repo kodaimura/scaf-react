@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { api, HttpError } from "../../lib/api";
 import styles from "../../styles/pages/signup/signup.module.css";
 
-export default function Signup() {
+const Signup: React.FC = () => {
   const navigate = useNavigate();
 
   const [lastName, setLastName] = useState("");
@@ -140,3 +140,5 @@ export default function Signup() {
     </div>
   );
 }
+
+export default Signup;

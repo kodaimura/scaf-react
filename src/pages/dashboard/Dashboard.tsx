@@ -1,7 +1,7 @@
 import { useAuth } from "../../contexts/AuthContext";
 import styles from "../../styles/pages/dashboard/dashboard.module.css";
 
-export default function Dashboard() {
+const Dashboard: React.FC = () => {
   const { account } = useAuth();
 
   return (
@@ -17,3 +17,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
+export default Dashboard;

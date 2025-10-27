@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import styles from "../../styles/pages/notfound/notfound.module.css";
 
-export default function NotFound() {
+const NotFound: React.FC = () => {
   const navigate = useNavigate();
 
   return (
@@ -14,3 +14,5 @@ export default function NotFound() {
     </div>
   );
 }
+
+export default NotFound;

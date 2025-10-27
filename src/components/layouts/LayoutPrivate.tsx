@@ -2,7 +2,11 @@ import HeaderPrivate from "./HeaderPrivate";
 import Footer from "./Footer";
 import styles from "../../styles/layouts/layout-private.module.css";
 
-export default function LayoutPrivate({ children }: { children: React.ReactNode }) {
+type Props = {
+  children: React.ReactNode;
+};
+
+const LayoutPrivate: React.FC<Props> = ({ children }) => {
   return (
     <div className={styles.container}>
       <HeaderPrivate />
@@ -11,3 +15,5 @@ export default function LayoutPrivate({ children }: { children: React.ReactNode 
     </div>
   );
 }
+
+export default LayoutPrivate;

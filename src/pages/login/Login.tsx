@@ -10,7 +10,7 @@ interface LoginResponse {
   access_token: string;
 }
 
-export default function Login() {
+const Login: React.FC = () => {
   const { setAccount, setAccessToken } = useAuth();
   const navigate = useNavigate();
 
@@ -103,3 +103,5 @@ export default function Login() {
     </div>
   );
 }
+
+export default Login;

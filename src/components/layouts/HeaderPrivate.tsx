@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import styles from "../../styles/layouts/header.module.css";
 
-export default function HeaderPrivate() {
+const HeaderPrivate: React.FC = () => {
   const { account, logout } = useAuth();
 
   return (
@@ -27,3 +27,5 @@ export default function HeaderPrivate() {
     </header>
   );
 }
+
+export default HeaderPrivate;

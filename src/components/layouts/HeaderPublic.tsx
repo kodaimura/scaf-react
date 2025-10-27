@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import styles from "../../styles/layouts/header.module.css";
 
-export default function HeaderPublic() {
+const HeaderPublic: React.FC = () => {
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
@@ -12,3 +12,5 @@ export default function HeaderPublic() {
     </header>
   );
 }
+
+export default HeaderPublic;

@@ -7,7 +7,7 @@ import Signup from "./pages/signup/Signup";
 import Dashboard from "./pages/dashboard/Dashboard";
 import NotFound from "./pages/notfound/NotFound";
 
-function PrivateRoute() {
+const PrivateRoute = () => {
   const { account, loading } = useAuth();
 
   if (loading) return <div>Loading...</div>;
@@ -20,7 +20,7 @@ function PrivateRoute() {
   );
 }
 
-function PublicRoute() {
+const PublicRoute = () => {
   const { account, loading } = useAuth();
 
   if (loading) return <div>Loading...</div>;
@@ -33,7 +33,7 @@ function PublicRoute() {
   );
 }
 
-export default function AppRouter() {
+const AppRouter: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
@@ -52,3 +52,5 @@ export default function AppRouter() {
     </BrowserRouter>
   );
 }
+
+export default AppRouter;
