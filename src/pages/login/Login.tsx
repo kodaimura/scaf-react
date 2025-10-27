@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api, HttpError } from "@lib/api";
 import { useAuth } from "@contexts/AuthContext";
 import type { Account } from "types/models";
@@ -95,9 +95,9 @@ const Login: React.FC = () => {
 
         <p className={styles.text}>
           アカウントをお持ちでない方は{" "}
-          <a href="/signup" className={styles.link}>
+          <Link to="/signup" className={styles.link}>
             登録はこちら
-          </a>
+          </Link>
         </p>
       </form>
     </div>

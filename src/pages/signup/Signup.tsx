@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api, HttpError } from "@lib/api";
 import styles from "@styles/pages/signup/signup.module.css";
 
@@ -134,7 +134,7 @@ const Signup: React.FC = () => {
 
         <p className={styles.text}>
           すでにアカウントをお持ちですか？{" "}
-          <a href="/login" className={styles.link}>ログイン</a>
+          <Link to="/login" className={styles.link}>ログイン</Link>
         </p>
       </form>
     </div>

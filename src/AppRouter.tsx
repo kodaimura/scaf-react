@@ -10,7 +10,7 @@ import NotFound from "./pages/notfound/NotFound";
 const PrivateRoute = () => {
   const { account, loading } = useAuth();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div></div>;
   if (!account) return <Navigate to="/login" replace />;
 
   return (
@@ -31,7 +31,7 @@ const PublicRoute = () => {
       <Outlet />
     </LayoutPublic>
   );
-}
+};
 
 const AppRouter: React.FC = () => {
   return (
