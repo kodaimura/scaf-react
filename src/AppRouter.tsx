@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "./contexts/AuthContext";
+import LayoutPublic from "./components/layouts/LayoutPublic";
+import LayoutPrivate from "./components/layouts/LayoutPrivate";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
 import Dashboard from "./pages/dashboard/Dashboard";
@@ -11,7 +13,11 @@ function PrivateRoute() {
   if (loading) return <div>Loading...</div>;
   if (!account) return <Navigate to="/login" replace />;
 
-  return <Outlet />;
+  return (
+    <LayoutPrivate>
+      <Outlet />
+    </LayoutPrivate>
+  );
 }
 
 function PublicRoute() {
@@ -20,7 +26,11 @@ function PublicRoute() {
   if (loading) return <div>Loading...</div>;
   if (account) return <Navigate to="/dashboard" replace />;
 
-  return <Outlet />;
+  return (
+    <LayoutPublic>
+      <Outlet />
+    </LayoutPublic>
+  );
 }
 
 export default function AppRouter() {

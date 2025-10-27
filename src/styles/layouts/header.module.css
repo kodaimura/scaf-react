@@ -1,0 +1,66 @@
+.header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+.inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo a {
+  text-decoration: none;
+  color: #2e3a4e;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.link {
+  color: #4a5d73;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.linkPrimary {
+  background-color: #4a5d73;
+  color: #fff;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.linkPrimary:hover {
+  background-color: #3d5066;
+}
+
+.logoutButton {
+  background: none;
+  border: none;
+  color: #4a5d73;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.logoutButton:hover {
+  text-decoration: underline;
+}
+
+.user {
+  margin-left: 0.5rem;
+  color: #666;
+  font-size: 0.9rem;
+}
