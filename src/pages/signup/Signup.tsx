@@ -49,7 +49,6 @@ export default function Signup() {
 
       navigate("/login");
     } catch (err: any) {
-      console.error("サインアップ失敗:", err);
       if (err instanceof HttpError && err.status === 409) {
         setError("メールアドレスは既に登録されています。");
       } else {

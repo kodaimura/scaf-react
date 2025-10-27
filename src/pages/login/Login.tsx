@@ -46,7 +46,6 @@ export default function Login() {
       setAccessToken(res.access_token);
       navigate("/dashboard");
     } catch (err: any) {
-      console.error("ログイン失敗:", err);
       if (err instanceof HttpError && err.status === 401) {
         setError("メールアドレスまたはパスワードが間違っています。");
       } else {

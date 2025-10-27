@@ -22,6 +22,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     setAccount(null);
     setAccessToken(null);
+    try {
+      api.post("/accounts/logout")
+    } catch { }
   };
 
   useEffect(() => {
