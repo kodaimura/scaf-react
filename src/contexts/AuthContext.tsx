@@ -23,8 +23,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setAccount(null);
     setAccessToken(null);
     try {
-      api.post("/accounts/logout")
-    } catch { }
+      api.post("/accounts/logout");
+    } catch {}
   };
 
   useEffect(() => {
@@ -48,7 +48,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ account, accessToken, setAccount, setAccessToken, logout, loading }}
+      value={{
+        account,
+        accessToken,
+        setAccount,
+        setAccessToken,
+        logout,
+        loading,
+      }}
     >
       {children}
     </AuthContext.Provider>

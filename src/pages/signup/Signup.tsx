@@ -21,10 +21,8 @@ const Signup: React.FC = () => {
     if (!email.trim()) return "メールアドレスを入力してください。";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       return "メールアドレスの形式が正しくありません。";
-    if (password.length < 8)
-      return "パスワードは8文字以上で入力してください。";
-    if (password !== confirmPassword)
-      return "パスワードが一致しません。";
+    if (password.length < 8) return "パスワードは8文字以上で入力してください。";
+    if (password !== confirmPassword) return "パスワードが一致しません。";
     return null;
   };
 
@@ -134,11 +132,13 @@ const Signup: React.FC = () => {
 
         <p className={styles.text}>
           すでにアカウントをお持ちですか？{" "}
-          <Link to="/login" className={styles.link}>ログイン</Link>
+          <Link to="/login" className={styles.link}>
+            ログイン
+          </Link>
         </p>
       </form>
     </div>
   );
-}
+};
 
 export default Signup;

@@ -9,6 +9,6 @@ const HeaderPublic: React.FC = () => {
       </h1>
     </header>
   );
-}
+};
 
 export default HeaderPublic;

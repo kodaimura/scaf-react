@@ -14,6 +14,6 @@ const LayoutPublic: React.FC<Props> = ({ children }) => {
       <Footer />
     </div>
   );
-}
+};
 
 export default LayoutPublic;

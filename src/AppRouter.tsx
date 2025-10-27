@@ -15,7 +15,7 @@ const PrivateRoute = () => {
 
   return (
     <LayoutPrivate>
-      <Outlet />
+        <Outlet />
     </LayoutPrivate>
   );
 }

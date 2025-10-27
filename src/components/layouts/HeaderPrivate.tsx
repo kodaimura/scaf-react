@@ -17,6 +17,6 @@ const HeaderPrivate: React.FC = () => {
       </nav>
     </header>
   );
-}
+};
 
 export default HeaderPrivate;

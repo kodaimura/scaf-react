@@ -1,5 +1,5 @@
-import { useEffect, type ReactNode } from 'react';
-import styles from '@styles/ui/modal.module.css';
+import { useEffect, type ReactNode } from "react";
+import styles from "@styles/ui/modal.module.css";
 
 type Props = {
   isOpen: boolean;
@@ -9,18 +9,24 @@ type Props = {
   footer?: ReactNode;
 };
 
-const Modal: React.FC<Props> = ({ isOpen, onClose, title, children, footer }) => {
+const Modal: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+  footer,
+}) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === "Escape") onClose();
     };
-    if (isOpen) document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    if (isOpen) document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    if (isOpen) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = '';
+    if (isOpen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -39,7 +45,11 @@ const Modal: React.FC<Props> = ({ isOpen, onClose, title, children, footer }) =>
       <div className={styles.modal}>
         <div className={styles.header}>
           {title && <div className={styles.title}>{title}</div>}
-          <button className={styles.closeButton} onClick={onClose} aria-label="閉じる">
+          <button
+            className={styles.closeButton}
+            onClick={onClose}
+            aria-label="閉じる"
+          >
             &times;
           </button>
         </div>

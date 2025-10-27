@@ -40,7 +40,10 @@ const Login: React.FC = () => {
 
     setLoading(true);
     try {
-      const res: LoginResponse = await api.post("accounts/login", { email, password });
+      const res: LoginResponse = await api.post("accounts/login", {
+        email,
+        password,
+      });
 
       setAccount(res.account);
       setAccessToken(res.access_token);
@@ -102,6 +105,6 @@ const Login: React.FC = () => {
       </form>
     </div>
   );
-}
+};
 
 export default Login;

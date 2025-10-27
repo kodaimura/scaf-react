@@ -13,6 +13,6 @@ const NotFound: React.FC = () => {
       </button>
     </div>
   );
-}
+};
 
 export default NotFound;

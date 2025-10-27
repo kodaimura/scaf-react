@@ -14,6 +14,6 @@ const LayoutPrivate: React.FC<Props> = ({ children }) => {
       <Footer />
     </div>
   );
-}
+};
 
 export default LayoutPrivate;

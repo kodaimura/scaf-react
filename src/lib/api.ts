@@ -80,7 +80,11 @@ export class Api {
     const response = await fetch(`${this.url}/${endpoint}`, options);
 
     if (!response.ok) {
-      if (response.status === 401 && retry && window.location.pathname !== "/login") {
+      if (
+        response.status === 401 &&
+        retry &&
+        window.location.pathname !== "/login"
+      ) {
         const refreshed = await this.tryRefreshToken();
         if (refreshed) {
           return this.apiFetch<T>(endpoint, method, body, false);
@@ -98,7 +102,11 @@ export class Api {
         // ignore parse error
       }
 
-      const error = new HttpError(response.status, errorData.message, errorData.details);
+      const error = new HttpError(
+        response.status,
+        errorData.message,
+        errorData.details
+      );
       this.handleHttpError(error);
       throw error;
     }
@@ -137,7 +145,10 @@ export class Api {
     }
   }
 
-  async get<T>(endpoint: string, params?: Record<string, any> | null): Promise<T> {
+  async get<T>(
+    endpoint: string,
+    params?: Record<string, any> | null
+  ): Promise<T> {
     if (params && typeof params === "object") {
       const query = new URLSearchParams(params).toString();
       endpoint += `?${query}`;
@@ -145,19 +156,31 @@ export class Api {
     return this.apiFetch<T>(endpoint, "GET");
   }
 
-  async post<T>(endpoint: string, body?: Record<string, unknown> | null): Promise<T> {
+  async post<T>(
+    endpoint: string,
+    body?: Record<string, unknown> | null
+  ): Promise<T> {
     return this.apiFetch<T>(endpoint, "POST", body);
   }
 
-  async put<T>(endpoint: string, body?: Record<string, unknown> | null): Promise<T> {
+  async put<T>(
+    endpoint: string,
+    body?: Record<string, unknown> | null
+  ): Promise<T> {
     return this.apiFetch<T>(endpoint, "PUT", body);
   }
 
-  async delete<T>(endpoint: string, body?: Record<string, unknown> | null): Promise<T> {
+  async delete<T>(
+    endpoint: string,
+    body?: Record<string, unknown> | null
+  ): Promise<T> {
     return this.apiFetch<T>(endpoint, "DELETE", body);
   }
 
-  async patch<T>(endpoint: string, body?: Record<string, unknown> | null): Promise<T> {
+  async patch<T>(
+    endpoint: string,
+    body?: Record<string, unknown> | null
+  ): Promise<T> {
     return this.apiFetch<T>(endpoint, "PATCH", body);
   }
 
