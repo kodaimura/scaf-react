@@ -3,6 +3,7 @@ import { useAuth } from "./contexts/AuthContext";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
 import Dashboard from "./pages/dashboard/Dashboard";
+import NotFound from "./pages/notfound/NotFound";
 
 function PrivateRoute() {
   const { account, loading } = useAuth();
@@ -32,10 +33,11 @@ export default function AppRouter() {
         </Route>
 
         <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Navigate to="/" replace />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
