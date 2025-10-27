@@ -1,0 +1,10 @@
+services:
+  builder:
+    build:
+      context: .
+      dockerfile: Dockerfile.build
+    volumes:
+      - .:/app
+    environment:
+      - VITE_API_URL=https://api.example.com
+    command: sh -c "npm run build && echo '✅ Build completed'"
