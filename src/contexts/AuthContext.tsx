@@ -9,6 +9,7 @@ interface AuthContextType {
   setAccount: (account: Account | null) => void;
   setAccessToken: (token: string | null) => void;
   logout: () => void;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -16,6 +17,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [account, setAccount] = useState<Account | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const logout = () => {
     setAccount(null);
@@ -27,9 +29,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     api.setAccessTokenCallback(setAccessToken);
   }, [accessToken]);
 
+  useEffect(() => {
+    const fetchAccount = async () => {
+      try {
+        const res = await api.get<{ account: Account }>("/accounts/me");
+        setAccount(res.account);
+      } catch {
+        setAccount(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAccount();
+  }, []);
+
   return (
     <AuthContext.Provider
-      value={{ account, accessToken, setAccount, setAccessToken, logout }}
+      value={{ account, accessToken, setAccount, setAccessToken, logout, loading }}
     >
       {children}
     </AuthContext.Provider>
