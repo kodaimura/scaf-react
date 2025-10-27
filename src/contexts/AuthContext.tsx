@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import type { Account } from "../types/models";
-import { api } from "../lib/api";
+import type { Account } from "types/models";
+import { api } from "@lib/api";
 
 interface AuthContextType {
   account: Account | null;

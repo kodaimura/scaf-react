@@ -1,5 +1,5 @@
-import { useAuth } from "../../contexts/AuthContext";
-import styles from "../../styles/pages/dashboard/dashboard.module.css";
+import { useAuth } from "@contexts/AuthContext";
+import styles from "@styles/pages/dashboard/dashboard.module.css";
 
 const Dashboard: React.FC = () => {
   const { account } = useAuth();

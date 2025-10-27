@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { api, HttpError } from "../../lib/api";
-import styles from "../../styles/pages/signup/signup.module.css";
+import { api, HttpError } from "@lib/api";
+import styles from "@styles/pages/signup/signup.module.css";
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();

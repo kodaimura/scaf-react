@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import styles from "../../styles/layouts/header.module.css";
+import { useAuth } from "@contexts/AuthContext";
+import styles from "@styles/layouts/header.module.css";
 
 const HeaderPrivate: React.FC = () => {
   const { account, logout } = useAuth();

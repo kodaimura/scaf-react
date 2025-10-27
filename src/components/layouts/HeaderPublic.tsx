@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import styles from "../../styles/layouts/header.module.css";
+import styles from "@styles/layouts/header.module.css";
 
 const HeaderPublic: React.FC = () => {
   return (

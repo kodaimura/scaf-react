@@ -1,6 +1,6 @@
 import HeaderPrivate from "./HeaderPrivate";
 import Footer from "./Footer";
-import styles from "../../styles/layouts/layout-private.module.css";
+import styles from "@styles/layouts/layout-private.module.css";
 
 type Props = {
   children: React.ReactNode;

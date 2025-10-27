@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { api, HttpError } from "../../lib/api";
-import { useAuth } from "../../contexts/AuthContext";
-import type { Account } from "../../types/models";
-import styles from "../../styles/pages/login/login.module.css";
+import { api, HttpError } from "@lib/api";
+import { useAuth } from "@contexts/AuthContext";
+import type { Account } from "types/models";
+import styles from "@styles/pages/login/login.module.css";
 
 interface LoginResponse {
   account: Account;
