@@ -8,5 +8,5 @@ services:
       - "3000:3000"
     environment:
       - VITE_API_URL=http://localhost:8000/api
-    command: npm run dev -- --host
+    command: npm run dev -- --port 3000 --host
     tty: true
