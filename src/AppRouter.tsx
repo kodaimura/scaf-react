@@ -1,4 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 import { useAuth } from "./contexts/AuthContext";
 import LayoutPublic from "./components/layouts/LayoutPublic";
 import LayoutPrivate from "./components/layouts/LayoutPrivate";
@@ -15,10 +21,10 @@ const PrivateRoute = () => {
 
   return (
     <LayoutPrivate>
-        <Outlet />
+      <Outlet />
     </LayoutPrivate>
   );
-}
+};
 
 const PublicRoute = () => {
   const { account, loading } = useAuth();
@@ -51,6 +57,6 @@ const AppRouter: React.FC = () => {
       </Routes>
     </BrowserRouter>
   );
-}
+};
 
 export default AppRouter;
