@@ -52,7 +52,7 @@ const Login: React.FC = () => {
       if (err instanceof HttpError && err.status === 401) {
         setError("メールアドレスまたはパスワードが間違っています。");
       } else {
-        setError("ログインに失敗しました。もう一度お試しください。");
+        setError("ログインに失敗しました。\nもう一度お試しください。");
       }
     } finally {
       setLoading(false);

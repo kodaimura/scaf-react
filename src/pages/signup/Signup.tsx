@@ -50,7 +50,7 @@ const Signup: React.FC = () => {
       if (err instanceof HttpError && err.status === 409) {
         setError("メールアドレスは既に登録されています。");
       } else {
-        setError("登録に失敗しました。もう一度お試しください。");
+        setError("登録に失敗しました。\nもう一度お試しください。");
       }
     } finally {
       setLoading(false);
