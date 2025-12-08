@@ -33,6 +33,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [accessToken]);
 
   useEffect(() => {
+    const publicPaths = ["/login", "/signup"];
+
+    if (publicPaths.includes(window.location.pathname)) {
+      setLoading(false);
+      return;
+    }
     const fetchAccount = async () => {
       try {
         const res = await api.get<{ account: Account }>("/accounts/me");
