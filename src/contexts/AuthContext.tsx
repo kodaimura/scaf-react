@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import type { Account } from "types/models";
@@ -19,12 +20,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const logout = () => {
+  const logout = async () => {
     setAccount(null);
     setAccessToken(null);
     try {
-      api.post("/accounts/logout");
-    } catch {}
+      await api.post("/auth/logout");
+    } catch {
+      // keep local logout state even if the server request fails
+    }
   };
 
   useEffect(() => {

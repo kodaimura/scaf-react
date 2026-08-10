@@ -1,5 +1,5 @@
 export interface HttpErrorDetails {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export class HttpError extends Error {
@@ -15,6 +15,7 @@ export class HttpError extends Error {
 }
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+type QueryValue = string | number | boolean | null | undefined;
 
 interface FetchOptions {
   method: HttpMethod;
@@ -91,7 +92,13 @@ export class Api {
         }
       }
 
-      let errorData: { message: string; details: HttpErrorDetails } = {
+      let errorData: {
+        code?: string;
+        detail?: string;
+        message?: string;
+        details?: HttpErrorDetails;
+        errors?: HttpErrorDetails;
+      } = {
         message: "Unknown error",
         details: {},
       };
@@ -104,8 +111,8 @@ export class Api {
 
       const error = new HttpError(
         response.status,
-        errorData.message,
-        errorData.details
+        errorData.message || errorData.code || errorData.detail || "Unknown error",
+        errorData.details || errorData.errors || {}
       );
       this.handleHttpError(error);
       throw error;
@@ -120,7 +127,7 @@ export class Api {
 
   private async tryRefreshToken(): Promise<boolean> {
     try {
-      const response = await fetch(`${this.url}/accounts/refresh`, {
+      const response = await fetch(`${this.url}/auth/refresh`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -147,11 +154,17 @@ export class Api {
 
   async get<T>(
     endpoint: string,
-    params?: Record<string, any> | null
+    params?: Record<string, QueryValue> | null
   ): Promise<T> {
     if (params && typeof params === "object") {
-      const query = new URLSearchParams(params).toString();
-      endpoint += `?${query}`;
+      const query = new URLSearchParams();
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          query.set(key, String(value));
+        }
+      });
+      const queryString = query.toString();
+      if (queryString) endpoint += `?${queryString}`;
     }
     return this.apiFetch<T>(endpoint, "GET");
   }

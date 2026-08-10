@@ -40,15 +40,15 @@ const Login: React.FC = () => {
 
     setLoading(true);
     try {
-      const res: LoginResponse = await api.post("accounts/login", {
-        email,
+      const res: LoginResponse = await api.post("auth/login", {
+        login_id: email,
         password,
       });
 
       setAccount(res.account);
       setAccessToken(res.access_token);
       navigate("/dashboard");
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err instanceof HttpError && err.status === 401) {
         setError("メールアドレスまたはパスワードが間違っています。");
       } else {

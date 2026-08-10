@@ -38,7 +38,8 @@ const Signup: React.FC = () => {
 
     setLoading(true);
     try {
-      await api.post("accounts/signup", {
+      await api.post("auth/signup", {
+        login_id: email,
         first_name: firstName,
         last_name: lastName,
         email,
@@ -46,7 +47,7 @@ const Signup: React.FC = () => {
       });
 
       navigate("/login");
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err instanceof HttpError && err.status === 409) {
         setError("メールアドレスは既に登録されています。");
       } else {
