@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api, HttpError } from "@lib/api";
+import { Button, ErrorMessage, FormField, Input } from "@ui/index";
 import styles from "@styles/pages/signup/signup.module.css";
 
 const Signup: React.FC = () => {
@@ -63,73 +64,73 @@ const Signup: React.FC = () => {
       <form onSubmit={handleSubmit} className={styles.form} noValidate>
         <h1 className={styles.title}>アカウント登録</h1>
 
-        {error && <p className={styles.error}>{error}</p>}
+        <ErrorMessage className={styles.error} message={error} />
 
-        <label className={styles.label}>
-          姓
-          <input
+        <FormField htmlFor="last_name" label="姓" required>
+          <Input
+            id="last_name"
             type="text"
             name="last_name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             required
-            className={styles.input}
           />
-        </label>
+        </FormField>
 
-        <label className={styles.label}>
-          名
-          <input
+        <FormField htmlFor="first_name" label="名" required>
+          <Input
+            id="first_name"
             type="text"
             name="first_name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             required
-            className={styles.input}
           />
-        </label>
+        </FormField>
 
-        <label className={styles.label}>
-          メールアドレス
-          <input
+        <FormField htmlFor="email" label="メールアドレス" required>
+          <Input
+            id="email"
             type="email"
             name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className={styles.input}
           />
-        </label>
+        </FormField>
 
-        <label className={styles.label}>
-          パスワード
-          <input
+        <FormField htmlFor="password" label="パスワード" required>
+          <Input
+            id="password"
             type="password"
             name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             minLength={8}
-            className={styles.input}
           />
-        </label>
+        </FormField>
 
-        <label className={styles.label}>
-          パスワード（確認）
-          <input
+        <FormField htmlFor="confirm_password" label="パスワード（確認）" required>
+          <Input
+            id="confirm_password"
             type="password"
             name="confirm_password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
             minLength={8}
-            className={styles.input}
           />
-        </label>
+        </FormField>
 
-        <button type="submit" className={styles.button} disabled={loading}>
+        <Button
+          type="submit"
+          className={styles.button}
+          disabled={loading}
+          loading={loading}
+        >
           {loading ? "登録中..." : "登録"}
-        </button>
+        </Button>
 
         <p className={styles.text}>
           すでにアカウントをお持ちですか？{" "}

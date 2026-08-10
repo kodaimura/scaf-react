@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api, HttpError } from "@lib/api";
 import { useAuth } from "@contexts/AuthContext";
+import { Button, ErrorMessage, FormField, Input } from "@ui/index";
 import type { Account } from "types/models";
 import styles from "@styles/pages/login/login.module.css";
 
@@ -65,36 +66,38 @@ const Login: React.FC = () => {
       <form onSubmit={handleSubmit} className={styles.form} noValidate>
         <h1 className={styles.title}>ログイン</h1>
 
-        {/* エラー表示 */}
-        {error && <p className={styles.error}>{error}</p>}
+        <ErrorMessage className={styles.error} message={error} />
 
-        <label className={styles.label}>
-          メールアドレス
-          <input
+        <FormField htmlFor="email" label="メールアドレス" required>
+          <Input
+            id="email"
             type="email"
             name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className={styles.input}
           />
-        </label>
+        </FormField>
 
-        <label className={styles.label}>
-          パスワード
-          <input
+        <FormField htmlFor="password" label="パスワード" required>
+          <Input
+            id="password"
             type="password"
             name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className={styles.input}
           />
-        </label>
+        </FormField>
 
-        <button type="submit" className={styles.button} disabled={loading}>
+        <Button
+          type="submit"
+          className={styles.button}
+          disabled={loading}
+          loading={loading}
+        >
           {loading ? "ログイン中..." : "ログイン"}
-        </button>
+        </Button>
 
         <p className={styles.text}>
           アカウントをお持ちでない方は{" "}
