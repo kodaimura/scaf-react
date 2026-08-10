@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import type { Account } from "types/models";
 import { api } from "@lib/api";
+import { isPublicRoutePath } from "@/routes";
 
 interface AuthContextType {
   account: Account | null;
@@ -36,14 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [accessToken]);
 
   useEffect(() => {
-    const publicPaths = [
-      "/login",
-      "/signup",
-      "/forgot-password",
-      "/reset-password",
-    ];
-
-    if (publicPaths.includes(window.location.pathname)) {
+    if (isPublicRoutePath(window.location.pathname)) {
       setLoading(false);
       return;
     }

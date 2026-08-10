@@ -6,6 +6,7 @@ import {
   Outlet,
 } from "react-router-dom";
 import { useAuth } from "@contexts/AuthContext";
+import { ROUTES } from "@/routes";
 import LayoutPublic from "@layouts/LayoutPublic";
 import LayoutPrivate from "@layouts/LayoutPrivate";
 import Processing from "@ui/Processing";
@@ -20,7 +21,7 @@ const PrivateRoute = () => {
   const { account, loading } = useAuth();
 
   if (loading) return <Processing text="読み込み中..." />;
-  if (!account) return <Navigate to="/login" replace />;
+  if (!account) return <Navigate to={ROUTES.login} replace />;
 
   return (
     <LayoutPrivate>
@@ -33,7 +34,7 @@ const PublicRoute = () => {
   const { account, loading } = useAuth();
 
   if (loading) return <Processing text="読み込み中..." />;
-  if (account) return <Navigate to="/dashboard" replace />;
+  if (account) return <Navigate to={ROUTES.dashboard} replace />;
 
   return (
     <LayoutPublic>
@@ -47,15 +48,18 @@ const AppRouter: React.FC = () => {
     <BrowserRouter>
       <Routes>
         <Route element={<PublicRoute />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path={ROUTES.login} element={<Login />} />
+          <Route path={ROUTES.signup} element={<Signup />} />
+          <Route path={ROUTES.forgotPassword} element={<ForgotPassword />} />
+          <Route path={ROUTES.resetPassword} element={<ResetPassword />} />
         </Route>
 
         <Route element={<PrivateRoute />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/dashboard" element={<Navigate to="/" replace />} />
+          <Route path={ROUTES.home} element={<Dashboard />} />
+          <Route
+            path={ROUTES.dashboard}
+            element={<Navigate to={ROUTES.home} replace />}
+          />
         </Route>
 
         <Route path="*" element={<NotFound />} />

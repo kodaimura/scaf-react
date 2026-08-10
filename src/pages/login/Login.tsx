@@ -1,8 +1,11 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api, HttpError } from "@lib/api";
+import { getApiErrorMessage } from "@lib/errorMessages";
 import { waitAtLeast, waitForProcessingPaint } from "@lib/loading";
+import { validateEmail, validateRequired } from "@lib/validation";
 import { useAuth } from "@contexts/AuthContext";
+import { ROUTES } from "@/routes";
 import { Button, ErrorMessage, FormField, Input, Processing } from "@ui/index";
 import type { Account } from "types/models";
 import styles from "@styles/pages/auth/auth.module.css";
@@ -23,11 +26,7 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const validate = (): string | null => {
-    if (!email.trim()) return "メールアドレスを入力してください。";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      return "メールアドレスの形式が正しくありません。";
-    if (!password.trim()) return "パスワードを入力してください。";
-    return null;
+    return validateEmail(email) ?? validateRequired(password, "パスワード");
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -52,10 +51,15 @@ const Login: React.FC = () => {
 
       setAccount(res.account);
       setAccessToken(res.access_token);
-      navigate("/dashboard");
+      navigate(ROUTES.dashboard);
     } catch (err: unknown) {
       if (err instanceof HttpError && err.status === 401) {
-        setError("メールアドレスまたはパスワードが間違っています。");
+        setError(
+          getApiErrorMessage(
+            err,
+            "メールアドレスまたはパスワードが間違っています。",
+          ),
+        );
       } else {
         setError("ログインに失敗しました。\nもう一度お試しください。");
       }
@@ -112,14 +116,14 @@ const Login: React.FC = () => {
         </Button>
 
         <p className={styles.text}>
-          <Link to="/forgot-password" className={styles.link}>
+          <Link to={ROUTES.forgotPassword} className={styles.link}>
             パスワードをお忘れですか？
           </Link>
         </p>
 
         <p className={styles.text}>
           アカウントをお持ちでない方は{" "}
-          <Link to="/signup" className={styles.link}>
+          <Link to={ROUTES.signup} className={styles.link}>
             登録はこちら
           </Link>
         </p>

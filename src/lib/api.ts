@@ -1,3 +1,5 @@
+import { appConfig } from "@lib/config";
+
 export interface HttpErrorDetails {
   [key: string]: unknown;
 }
@@ -252,4 +254,4 @@ export class Api {
   }
 }
 
-export const api = new Api(import.meta.env.VITE_API_URL || "/api");
+export const api = new Api(appConfig.apiUrl);

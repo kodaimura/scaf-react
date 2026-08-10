@@ -2,6 +2,8 @@ import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { api } from "@lib/api";
 import { waitAtLeast, waitForProcessingPaint } from "@lib/loading";
+import { validateEmail } from "@lib/validation";
+import { ROUTES } from "@/routes";
 import {
   Button,
   ErrorMessage,
@@ -19,11 +21,7 @@ const ForgotPassword: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const validate = (): string | null => {
-    if (!email.trim()) return "メールアドレスを入力してください。";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return "メールアドレスの形式が正しくありません。";
-    }
-    return null;
+    return validateEmail(email);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -94,7 +92,7 @@ const ForgotPassword: React.FC = () => {
         </Button>
 
         <p className={styles.text}>
-          <Link to="/login" className={styles.link}>
+          <Link to={ROUTES.login} className={styles.link}>
             ログインへ戻る
           </Link>
         </p>

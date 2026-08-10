@@ -1,7 +1,15 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api, HttpError } from "@lib/api";
+import { getApiErrorMessage } from "@lib/errorMessages";
 import { waitAtLeast, waitForProcessingPaint } from "@lib/loading";
+import {
+  PASSWORD_MIN_LENGTH,
+  validateEmail,
+  validatePasswordConfirmation,
+  validateRequired,
+} from "@lib/validation";
+import { ROUTES } from "@/routes";
 import {
   Button,
   ErrorMessage,
@@ -25,14 +33,12 @@ const Signup: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const validate = (): string | null => {
-    if (!lastName.trim()) return "姓を入力してください。";
-    if (!firstName.trim()) return "名を入力してください。";
-    if (!email.trim()) return "メールアドレスを入力してください。";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      return "メールアドレスの形式が正しくありません。";
-    if (password.length < 8) return "パスワードは8文字以上で入力してください。";
-    if (password !== confirmPassword) return "パスワードが一致しません。";
-    return null;
+    return (
+      validateRequired(lastName, "姓") ??
+      validateRequired(firstName, "名") ??
+      validateEmail(email) ??
+      validatePasswordConfirmation(password, confirmPassword)
+    );
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -58,10 +64,12 @@ const Signup: React.FC = () => {
         password,
       });
 
-      navigate("/login");
+      navigate(ROUTES.login);
     } catch (err: unknown) {
       if (err instanceof HttpError && err.status === 409) {
-        setError("メールアドレスは既に登録されています。");
+        setError(
+          getApiErrorMessage(err, "メールアドレスは既に登録されています。"),
+        );
       } else {
         setError("登録に失敗しました。\nもう一度お試しください。");
       }
@@ -124,7 +132,10 @@ const Signup: React.FC = () => {
           label={
             <span className={styles.labelWithHelp}>
               パスワード
-              <Help align="center" text="8文字以上で入力してください。" />
+              <Help
+                align="center"
+                text={`${PASSWORD_MIN_LENGTH}文字以上で入力してください。`}
+              />
             </span>
           }
           required
@@ -136,7 +147,7 @@ const Signup: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            minLength={8}
+            minLength={PASSWORD_MIN_LENGTH}
           />
         </FormField>
 
@@ -152,7 +163,7 @@ const Signup: React.FC = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            minLength={8}
+            minLength={PASSWORD_MIN_LENGTH}
           />
         </FormField>
 
@@ -167,7 +178,7 @@ const Signup: React.FC = () => {
 
         <p className={styles.text}>
           すでにアカウントをお持ちですか？{" "}
-          <Link to="/login" className={styles.link}>
+          <Link to={ROUTES.login} className={styles.link}>
             ログイン
           </Link>
         </p>

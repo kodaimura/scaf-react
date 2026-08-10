@@ -18,10 +18,11 @@ Open http://localhost:3000.
 
 ```sh
 WEB_PORT=3000
-VITE_API_URL=http://localhost:8000/api
+APP_API_URL=http://localhost:8000/api
 ```
 
-`VITE_API_URL` is embedded at build time for production builds.
+`APP_API_URL` is written to `/env.json` when the container starts. The production
+image can be reused across environments without rebuilding for each API URL.
 
 ## Commands
 
@@ -45,6 +46,6 @@ make outdated           # Check outdated dependencies
 The production image builds static assets and serves them with nginx.
 
 ```sh
-VITE_API_URL=https://api.example.com make build ENV=prod
-make up ENV=prod
+make build ENV=prod
+APP_API_URL=https://api.example.com make up ENV=prod
 ```

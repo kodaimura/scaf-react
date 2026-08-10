@@ -1,7 +1,13 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { api, HttpError } from "@lib/api";
+import { api } from "@lib/api";
+import { getPasswordResetTokenErrorMessage } from "@lib/errorMessages";
 import { waitAtLeast, waitForProcessingPaint } from "@lib/loading";
+import {
+  PASSWORD_MIN_LENGTH,
+  validatePasswordConfirmation,
+} from "@lib/validation";
+import { ROUTES } from "@/routes";
 import {
   Button,
   ErrorMessage,
@@ -14,24 +20,6 @@ import {
 import styles from "@styles/pages/auth/auth.module.css";
 
 type VerificationState = "checking" | "valid" | "invalid";
-
-const getTokenErrorMessage = (err: unknown) => {
-  if (!(err instanceof HttpError)) {
-    return "再設定リンクを確認できませんでした。";
-  }
-
-  if (err.code === "TOKEN_EXPIRED") {
-    return "再設定リンクの有効期限が切れています。";
-  }
-  if (err.code === "TOKEN_ALREADY_USED") {
-    return "この再設定リンクは既に使用されています。";
-  }
-  if (err.code === "TOKEN_INVALID") {
-    return "再設定リンクが正しくありません。";
-  }
-
-  return "再設定リンクを確認できませんでした。";
-};
 
 const ResetPassword: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -61,7 +49,7 @@ const ResetPassword: React.FC = () => {
         setVerification("valid");
       } catch (err) {
         if (!active) return;
-        setError(getTokenErrorMessage(err));
+        setError(getPasswordResetTokenErrorMessage(err));
         setVerification("invalid");
       }
     };
@@ -74,9 +62,7 @@ const ResetPassword: React.FC = () => {
   }, [token]);
 
   const validate = (): string | null => {
-    if (password.length < 8) return "パスワードは8文字以上で入力してください。";
-    if (password !== confirmPassword) return "パスワードが一致しません。";
-    return null;
+    return validatePasswordConfirmation(password, confirmPassword);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -100,7 +86,7 @@ const ResetPassword: React.FC = () => {
       });
       setSucceeded(true);
     } catch (err) {
-      setError(getTokenErrorMessage(err));
+      setError(getPasswordResetTokenErrorMessage(err));
       setVerification("invalid");
     } finally {
       await waitAtLeast(startedAt);
@@ -141,14 +127,17 @@ const ResetPassword: React.FC = () => {
               label={
                 <span className={styles.labelWithHelp}>
                   新しいパスワード
-                  <Help align="center" text="8文字以上で入力してください。" />
+                  <Help
+                    align="center"
+                    text={`${PASSWORD_MIN_LENGTH}文字以上で入力してください。`}
+                  />
                 </span>
               }
               required
             >
               <Input
                 id="password"
-                minLength={8}
+                minLength={PASSWORD_MIN_LENGTH}
                 name="password"
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -164,7 +153,7 @@ const ResetPassword: React.FC = () => {
             >
               <Input
                 id="confirm_password"
-                minLength={8}
+                minLength={PASSWORD_MIN_LENGTH}
                 name="confirm_password"
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
@@ -185,7 +174,7 @@ const ResetPassword: React.FC = () => {
         )}
 
         <p className={styles.text}>
-          <Link to="/login" className={styles.link}>
+          <Link to={ROUTES.login} className={styles.link}>
             ログインへ戻る
           </Link>
         </p>
