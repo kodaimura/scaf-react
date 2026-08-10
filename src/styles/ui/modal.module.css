@@ -1,9 +1,6 @@
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
   background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
@@ -14,7 +11,7 @@
 
 .modal {
   background: #fff;
-  border-radius: 10px;
+  border-radius: 8px;
   width: 90%;
   max-width: 480px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -24,26 +21,39 @@
 }
 
 .header {
+  align-items: center;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  gap: 1rem;
   padding: 1rem 1.2rem;
   border-bottom: 1px solid #e5e7eb;
+}
+
+.titleRow {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  min-width: 0;
 }
 
 .title {
   font-size: 1.1rem;
   font-weight: 600;
   color: #111827;
+  overflow-wrap: anywhere;
 }
 
 .closeButton {
-  font-size: 1.4rem;
-  background: none;
-  border: none;
-  cursor: pointer;
+  align-items: center;
+  border-radius: 4px;
   color: #6b7280;
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 32px;
+  justify-content: center;
   transition: color 0.2s ease;
+  width: 32px;
 }
 
 .closeButton:hover {
@@ -57,7 +67,24 @@
 .footer {
   padding: 1rem 1.2rem;
   border-top: 1px solid #e5e7eb;
-  text-align: right;
+}
+
+.icon {
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.info {
+  color: #1976d2;
+}
+
+.warning {
+  color: #b45309;
+}
+
+.danger {
+  color: #dc2626;
 }
 
 @keyframes fadeIn {
