@@ -6,7 +6,9 @@ type CheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {
 };
 
 const Checkbox = ({ className, label, ...props }: CheckboxProps) => {
-  const inputClassNames = [styles.checkbox, className].filter(Boolean).join(" ");
+  const inputClassNames = [styles.checkbox, className]
+    .filter(Boolean)
+    .join(" ");
 
   if (!label) {
     return <input {...props} className={inputClassNames} type="checkbox" />;

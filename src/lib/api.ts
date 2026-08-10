@@ -11,7 +11,7 @@ export class HttpError extends Error {
     status: number,
     code: string,
     message: string,
-    details: HttpErrorDetails = {}
+    details: HttpErrorDetails = {},
   ) {
     super(message);
     this.status = status;
@@ -53,7 +53,7 @@ export class Api {
 
   private async createFetchOptions(
     method: HttpMethod,
-    body?: RequestBody
+    body?: RequestBody,
   ): Promise<FetchOptions> {
     const headers: Record<string, string> = {};
 
@@ -81,7 +81,7 @@ export class Api {
     endpoint: string,
     method: HttpMethod,
     body?: RequestBody,
-    retry = true
+    retry = true,
   ): Promise<T> {
     if (endpoint.startsWith("/")) {
       endpoint = endpoint.slice(1);
@@ -122,8 +122,11 @@ export class Api {
       const error = new HttpError(
         response.status,
         errorData.code || "UNKNOWN_ERROR",
-        errorData.message || errorData.code || errorData.detail || "Unknown error",
-        errorData.details || errorData.errors || {}
+        errorData.message ||
+          errorData.code ||
+          errorData.detail ||
+          "Unknown error",
+        errorData.details || errorData.errors || {},
       );
       this.handleHttpError(error);
       throw error;
@@ -175,7 +178,7 @@ export class Api {
 
   async get<T>(
     endpoint: string,
-    params?: Record<string, QueryValue> | null
+    params?: Record<string, QueryValue> | null,
   ): Promise<T> {
     if (params && typeof params === "object") {
       const query = new URLSearchParams();
@@ -190,31 +193,19 @@ export class Api {
     return this.apiFetch<T>(endpoint, "GET");
   }
 
-  async post<T>(
-    endpoint: string,
-    body?: RequestBody
-  ): Promise<T> {
+  async post<T>(endpoint: string, body?: RequestBody): Promise<T> {
     return this.apiFetch<T>(endpoint, "POST", body);
   }
 
-  async put<T>(
-    endpoint: string,
-    body?: RequestBody
-  ): Promise<T> {
+  async put<T>(endpoint: string, body?: RequestBody): Promise<T> {
     return this.apiFetch<T>(endpoint, "PUT", body);
   }
 
-  async delete<T>(
-    endpoint: string,
-    body?: RequestBody
-  ): Promise<T> {
+  async delete<T>(endpoint: string, body?: RequestBody): Promise<T> {
     return this.apiFetch<T>(endpoint, "DELETE", body);
   }
 
-  async patch<T>(
-    endpoint: string,
-    body?: RequestBody
-  ): Promise<T> {
+  async patch<T>(endpoint: string, body?: RequestBody): Promise<T> {
     return this.apiFetch<T>(endpoint, "PATCH", body);
   }
 
@@ -238,7 +229,7 @@ export class Api {
         response.status,
         "BLOB_ERROR",
         "Blob request failed",
-        {}
+        {},
       );
     }
 

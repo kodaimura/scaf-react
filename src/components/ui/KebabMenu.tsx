@@ -78,7 +78,9 @@ const KebabMenu = ({
               role="menuitem"
               type="button"
             >
-              {item.icon && <span className={styles.itemIcon}>{item.icon}</span>}
+              {item.icon && (
+                <span className={styles.itemIcon}>{item.icon}</span>
+              )}
               <span>{item.label}</span>
             </button>
           ))}
