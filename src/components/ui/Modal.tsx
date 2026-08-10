@@ -1,20 +1,30 @@
 import { useEffect, type ReactNode } from "react";
+import { createPortal } from "react-dom";
+import { AlertCircle, AlertTriangle, Info, X } from "lucide-react";
 import styles from "@styles/ui/modal.module.css";
 
+type ModalLevel = "default" | "info" | "warning" | "danger";
+
 type Props = {
+  children?: ReactNode;
+  className?: string;
+  closeOnOverlayClick?: boolean;
+  footer?: ReactNode;
   isOpen: boolean;
+  level?: ModalLevel;
   onClose: () => void;
   title?: string;
-  children?: ReactNode;
-  footer?: ReactNode;
 };
 
 const Modal: React.FC<Props> = ({
+  children,
+  className,
+  closeOnOverlayClick = true,
+  footer,
   isOpen,
+  level = "default",
   onClose,
   title,
-  children,
-  footer,
 }) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -25,32 +35,59 @@ const Modal: React.FC<Props> = ({
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    if (isOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
+    if (!isOpen) return;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
   }, [isOpen]);
 
   if (!isOpen) return null;
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!closeOnOverlayClick) return;
     if (e.target === e.currentTarget) onClose();
   };
 
-  return (
+  const icon =
+    level === "danger" ? (
+      <AlertCircle size={20} />
+    ) : level === "warning" ? (
+      <AlertTriangle size={20} />
+    ) : level === "info" ? (
+      <Info size={20} />
+    ) : null;
+
+  return createPortal(
     <div
       className={styles.overlay}
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
     >
-      <div className={styles.modal}>
+      <div className={[styles.modal, className].filter(Boolean).join(" ")}>
         <div className={styles.header}>
-          {title && <div className={styles.title}>{title}</div>}
+          <div className={styles.titleRow}>
+            {icon && (
+              <span
+                aria-hidden="true"
+                className={[styles.icon, styles[level]].join(" ")}
+              >
+                {icon}
+              </span>
+            )}
+            {title && <div className={styles.title}>{title}</div>}
+          </div>
           <button
             className={styles.closeButton}
             onClick={onClose}
             aria-label="閉じる"
+            type="button"
           >
-            &times;
+            <X size={20} />
           </button>
         </div>
 
@@ -58,7 +95,8 @@ const Modal: React.FC<Props> = ({
 
         {footer && <div className={styles.footer}>{footer}</div>}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 

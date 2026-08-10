@@ -1,7 +1,9 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import type { Account } from "types/models";
 import { api } from "@lib/api";
+import { isPublicRoutePath } from "@/routes";
 
 interface AuthContextType {
   account: Account | null;
@@ -19,12 +21,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const logout = () => {
+  const logout = async () => {
     setAccount(null);
     setAccessToken(null);
     try {
-      api.post("/accounts/logout");
-    } catch {}
+      await api.post("/auth/logout");
+    } catch {
+      // keep local logout state even if the server request fails
+    }
   };
 
   useEffect(() => {
@@ -33,9 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [accessToken]);
 
   useEffect(() => {
-    const publicPaths = ["/login", "/signup"];
-
-    if (publicPaths.includes(window.location.pathname)) {
+    if (isPublicRoutePath(window.location.pathname)) {
       setLoading(false);
       return;
     }

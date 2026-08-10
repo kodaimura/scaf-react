@@ -4,20 +4,28 @@ import {
   Route,
   Navigate,
   Outlet,
+  useLocation,
 } from "react-router-dom";
-import { useAuth } from "./contexts/AuthContext";
-import LayoutPublic from "./components/layouts/LayoutPublic";
-import LayoutPrivate from "./components/layouts/LayoutPrivate";
-import Login from "./pages/login/Login";
-import Signup from "./pages/signup/Signup";
-import Dashboard from "./pages/dashboard/Dashboard";
-import NotFound from "./pages/notfound/NotFound";
+import { useAuth } from "@contexts/AuthContext";
+import { buildLoginPathWithFrom, ROUTES } from "@/routes";
+import LayoutPublic from "@layouts/LayoutPublic";
+import LayoutPrivate from "@layouts/LayoutPrivate";
+import Processing from "@ui/Processing";
+import Login from "@pages/login/Login";
+import Signup from "@pages/signup/Signup";
+import ForgotPassword from "@pages/forgot-password/ForgotPassword";
+import ResetPassword from "@pages/reset-password/ResetPassword";
+import Dashboard from "@pages/dashboard/Dashboard";
+import NotFound from "@pages/notfound/NotFound";
 
 const PrivateRoute = () => {
   const { account, loading } = useAuth();
+  const location = useLocation();
+  const currentPath = `${location.pathname}${location.search}${location.hash}`;
 
-  if (loading) return <div></div>;
-  if (!account) return <Navigate to="/login" replace />;
+  if (loading) return <Processing text="読み込み中..." />;
+  if (!account)
+    return <Navigate to={buildLoginPathWithFrom(currentPath)} replace />;
 
   return (
     <LayoutPrivate>
@@ -29,8 +37,8 @@ const PrivateRoute = () => {
 const PublicRoute = () => {
   const { account, loading } = useAuth();
 
-  if (loading) return <div>Loading...</div>;
-  if (account) return <Navigate to="/dashboard" replace />;
+  if (loading) return <Processing text="読み込み中..." />;
+  if (account) return <Navigate to={ROUTES.dashboard} replace />;
 
   return (
     <LayoutPublic>
@@ -44,13 +52,18 @@ const AppRouter: React.FC = () => {
     <BrowserRouter>
       <Routes>
         <Route element={<PublicRoute />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path={ROUTES.login} element={<Login />} />
+          <Route path={ROUTES.signup} element={<Signup />} />
+          <Route path={ROUTES.forgotPassword} element={<ForgotPassword />} />
+          <Route path={ROUTES.resetPassword} element={<ResetPassword />} />
         </Route>
 
         <Route element={<PrivateRoute />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/dashboard" element={<Navigate to="/" replace />} />
+          <Route path={ROUTES.home} element={<Dashboard />} />
+          <Route
+            path={ROUTES.dashboard}
+            element={<Navigate to={ROUTES.home} replace />}
+          />
         </Route>
 
         <Route path="*" element={<NotFound />} />
