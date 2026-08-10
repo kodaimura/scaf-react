@@ -10,7 +10,7 @@ import {
   Input,
   Processing,
 } from "@ui/index";
-import styles from "@styles/pages/signup/signup.module.css";
+import styles from "@styles/pages/auth/auth.module.css";
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
@@ -74,10 +74,17 @@ const Signup: React.FC = () => {
   return (
     <div className={styles.container}>
       {loading && <Processing text="登録中..." />}
-      <form onSubmit={handleSubmit} className={styles.form} noValidate>
+      <form
+        onSubmit={handleSubmit}
+        className={[styles.form, styles.wide].join(" ")}
+        noValidate
+      >
         <h1 className={styles.title}>アカウント登録</h1>
 
-        <ErrorMessage className={styles.error} message={error} />
+        <ErrorMessage
+          className={[styles.message, styles.centerMessage].join(" ")}
+          message={error}
+        />
 
         <FormField htmlFor="last_name" label="姓" required>
           <Input

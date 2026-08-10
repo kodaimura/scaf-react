@@ -11,6 +11,8 @@ import LayoutPrivate from "@layouts/LayoutPrivate";
 import Processing from "@ui/Processing";
 import Login from "@pages/login/Login";
 import Signup from "@pages/signup/Signup";
+import ForgotPassword from "@pages/forgot-password/ForgotPassword";
+import ResetPassword from "@pages/reset-password/ResetPassword";
 import Dashboard from "@pages/dashboard/Dashboard";
 import NotFound from "@pages/notfound/NotFound";
 
@@ -47,6 +49,8 @@ const AppRouter: React.FC = () => {
         <Route element={<PublicRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
 
         <Route element={<PrivateRoute />}>

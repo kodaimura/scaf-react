@@ -36,7 +36,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [accessToken]);
 
   useEffect(() => {
-    const publicPaths = ["/login", "/signup"];
+    const publicPaths = [
+      "/login",
+      "/signup",
+      "/forgot-password",
+      "/reset-password",
+    ];
 
     if (publicPaths.includes(window.location.pathname)) {
       setLoading(false);

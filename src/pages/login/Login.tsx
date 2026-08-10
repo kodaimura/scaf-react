@@ -5,7 +5,7 @@ import { waitAtLeast, waitForProcessingPaint } from "@lib/loading";
 import { useAuth } from "@contexts/AuthContext";
 import { Button, ErrorMessage, FormField, Input, Processing } from "@ui/index";
 import type { Account } from "types/models";
-import styles from "@styles/pages/login/login.module.css";
+import styles from "@styles/pages/auth/auth.module.css";
 
 interface LoginResponse {
   account: Account;
@@ -68,10 +68,17 @@ const Login: React.FC = () => {
   return (
     <div className={styles.container}>
       {loading && <Processing text="ログイン中..." />}
-      <form onSubmit={handleSubmit} className={styles.form} noValidate>
+      <form
+        onSubmit={handleSubmit}
+        className={[styles.form, styles.narrow].join(" ")}
+        noValidate
+      >
         <h1 className={styles.title}>ログイン</h1>
 
-        <ErrorMessage className={styles.error} message={error} />
+        <ErrorMessage
+          className={[styles.message, styles.centerMessage].join(" ")}
+          message={error}
+        />
 
         <FormField htmlFor="email" label="メールアドレス" required>
           <Input
@@ -103,6 +110,12 @@ const Login: React.FC = () => {
         >
           {loading ? "ログイン中..." : "ログイン"}
         </Button>
+
+        <p className={styles.text}>
+          <Link to="/forgot-password" className={styles.link}>
+            パスワードをお忘れですか？
+          </Link>
+        </p>
 
         <p className={styles.text}>
           アカウントをお持ちでない方は{" "}
