@@ -1,7 +1,15 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api, HttpError } from "@lib/api";
-import { Button, ErrorMessage, FormField, Input } from "@ui/index";
+import { waitAtLeast, waitForProcessingPaint } from "@lib/loading";
+import {
+  Button,
+  ErrorMessage,
+  FormField,
+  Help,
+  Input,
+  Processing,
+} from "@ui/index";
 import styles from "@styles/pages/signup/signup.module.css";
 
 const Signup: React.FC = () => {
@@ -37,7 +45,10 @@ const Signup: React.FC = () => {
       return;
     }
 
+    const startedAt = Date.now();
     setLoading(true);
+    await waitForProcessingPaint();
+
     try {
       await api.post("auth/signup", {
         login_id: email,
@@ -55,12 +66,14 @@ const Signup: React.FC = () => {
         setError("登録に失敗しました。\nもう一度お試しください。");
       }
     } finally {
+      await waitAtLeast(startedAt);
       setLoading(false);
     }
   };
 
   return (
     <div className={styles.container}>
+      {loading && <Processing text="登録中..." />}
       <form onSubmit={handleSubmit} className={styles.form} noValidate>
         <h1 className={styles.title}>アカウント登録</h1>
 
@@ -99,7 +112,16 @@ const Signup: React.FC = () => {
           />
         </FormField>
 
-        <FormField htmlFor="password" label="パスワード" required>
+        <FormField
+          htmlFor="password"
+          label={
+            <span className={styles.labelWithHelp}>
+              パスワード
+              <Help align="center" text="8文字以上で入力してください。" />
+            </span>
+          }
+          required
+        >
           <Input
             id="password"
             type="password"
@@ -111,7 +133,11 @@ const Signup: React.FC = () => {
           />
         </FormField>
 
-        <FormField htmlFor="confirm_password" label="パスワード（確認）" required>
+        <FormField
+          htmlFor="confirm_password"
+          label="パスワード（確認）"
+          required
+        >
           <Input
             id="confirm_password"
             type="password"

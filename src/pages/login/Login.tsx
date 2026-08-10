@@ -1,8 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api, HttpError } from "@lib/api";
+import { waitAtLeast, waitForProcessingPaint } from "@lib/loading";
 import { useAuth } from "@contexts/AuthContext";
-import { Button, ErrorMessage, FormField, Input } from "@ui/index";
+import { Button, ErrorMessage, FormField, Input, Processing } from "@ui/index";
 import type { Account } from "types/models";
 import styles from "@styles/pages/login/login.module.css";
 
@@ -39,7 +40,10 @@ const Login: React.FC = () => {
       return;
     }
 
+    const startedAt = Date.now();
     setLoading(true);
+    await waitForProcessingPaint();
+
     try {
       const res: LoginResponse = await api.post("auth/login", {
         login_id: email,
@@ -56,13 +60,14 @@ const Login: React.FC = () => {
         setError("ログインに失敗しました。\nもう一度お試しください。");
       }
     } finally {
+      await waitAtLeast(startedAt);
       setLoading(false);
     }
   };
 
-  // --- UI ---
   return (
     <div className={styles.container}>
+      {loading && <Processing text="ログイン中..." />}
       <form onSubmit={handleSubmit} className={styles.form} noValidate>
         <h1 className={styles.title}>ログイン</h1>
 

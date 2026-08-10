@@ -5,18 +5,19 @@ import {
   Navigate,
   Outlet,
 } from "react-router-dom";
-import { useAuth } from "./contexts/AuthContext";
-import LayoutPublic from "./components/layouts/LayoutPublic";
-import LayoutPrivate from "./components/layouts/LayoutPrivate";
-import Login from "./pages/login/Login";
-import Signup from "./pages/signup/Signup";
-import Dashboard from "./pages/dashboard/Dashboard";
-import NotFound from "./pages/notfound/NotFound";
+import { useAuth } from "@contexts/AuthContext";
+import LayoutPublic from "@layouts/LayoutPublic";
+import LayoutPrivate from "@layouts/LayoutPrivate";
+import Processing from "@ui/Processing";
+import Login from "@pages/login/Login";
+import Signup from "@pages/signup/Signup";
+import Dashboard from "@pages/dashboard/Dashboard";
+import NotFound from "@pages/notfound/NotFound";
 
 const PrivateRoute = () => {
   const { account, loading } = useAuth();
 
-  if (loading) return <div></div>;
+  if (loading) return <Processing text="読み込み中..." />;
   if (!account) return <Navigate to="/login" replace />;
 
   return (
@@ -29,7 +30,7 @@ const PrivateRoute = () => {
 const PublicRoute = () => {
   const { account, loading } = useAuth();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Processing text="読み込み中..." />;
   if (account) return <Navigate to="/dashboard" replace />;
 
   return (

@@ -26,6 +26,12 @@
   width: 100%;
 }
 
+.labelWithHelp {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
 .text {
   text-align: center;
   color: #555;
