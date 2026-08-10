@@ -4,11 +4,18 @@ export interface HttpErrorDetails {
 
 export class HttpError extends Error {
   status: number;
+  code: string;
   details: HttpErrorDetails;
 
-  constructor(status: number, message: string, details: HttpErrorDetails = {}) {
+  constructor(
+    status: number,
+    code: string,
+    message: string,
+    details: HttpErrorDetails = {}
+  ) {
     super(message);
     this.status = status;
+    this.code = code;
     this.details = details;
     this.name = "HttpError";
   }
@@ -16,15 +23,17 @@ export class HttpError extends Error {
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 type QueryValue = string | number | boolean | null | undefined;
+type RequestBody = Record<string, unknown> | FormData | null;
 
 interface FetchOptions {
   method: HttpMethod;
   headers: Record<string, string>;
   credentials: RequestCredentials;
-  body?: string;
+  body?: BodyInit;
 }
 
 export class Api {
+  private refreshPromise: Promise<boolean> | null = null;
   private url: string;
   private accessToken: string | null = null;
   private onAccessTokenRefresh?: (token: string) => void;
@@ -44,11 +53,9 @@ export class Api {
 
   private async createFetchOptions(
     method: HttpMethod,
-    body?: Record<string, unknown> | null
+    body?: RequestBody
   ): Promise<FetchOptions> {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
+    const headers: Record<string, string> = {};
 
     if (this.accessToken) {
       headers["Authorization"] = `Bearer ${this.accessToken}`;
@@ -60,7 +67,10 @@ export class Api {
       credentials: "include",
     };
 
-    if (body) {
+    if (body instanceof FormData) {
+      options.body = body;
+    } else if (body) {
+      headers["Content-Type"] = "application/json";
       options.body = JSON.stringify(body);
     }
 
@@ -70,7 +80,7 @@ export class Api {
   private async apiFetch<T>(
     endpoint: string,
     method: HttpMethod,
-    body?: Record<string, unknown> | null,
+    body?: RequestBody,
     retry = true
   ): Promise<T> {
     if (endpoint.startsWith("/")) {
@@ -84,7 +94,7 @@ export class Api {
       if (
         response.status === 401 &&
         retry &&
-        window.location.pathname !== "/login"
+        !endpoint.endsWith("auth/login")
       ) {
         const refreshed = await this.tryRefreshToken();
         if (refreshed) {
@@ -111,6 +121,7 @@ export class Api {
 
       const error = new HttpError(
         response.status,
+        errorData.code || "UNKNOWN_ERROR",
         errorData.message || errorData.code || errorData.detail || "Unknown error",
         errorData.details || errorData.errors || {}
       );
@@ -126,30 +137,40 @@ export class Api {
   }
 
   private async tryRefreshToken(): Promise<boolean> {
-    try {
-      const response = await fetch(`${this.url}/auth/refresh`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
-
-      if (!response.ok) return false;
-
-      const newToken = (await response.json()).access_token;
-      if (newToken) {
-        this.accessToken = newToken;
-
-        if (this.onAccessTokenRefresh) {
-          this.onAccessTokenRefresh(newToken);
-        }
-      }
-
-      return true;
-    } catch {
-      return false;
+    if (this.refreshPromise) {
+      return this.refreshPromise;
     }
+
+    this.refreshPromise = (async () => {
+      try {
+        const response = await fetch(`${this.url}/auth/refresh`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        if (!response.ok) return false;
+
+        const newToken = (await response.json()).access_token;
+        if (newToken) {
+          this.accessToken = newToken;
+
+          if (this.onAccessTokenRefresh) {
+            this.onAccessTokenRefresh(newToken);
+          }
+        }
+
+        return true;
+      } catch {
+        return false;
+      } finally {
+        this.refreshPromise = null;
+      }
+    })();
+
+    return this.refreshPromise;
   }
 
   async get<T>(
@@ -171,30 +192,57 @@ export class Api {
 
   async post<T>(
     endpoint: string,
-    body?: Record<string, unknown> | null
+    body?: RequestBody
   ): Promise<T> {
     return this.apiFetch<T>(endpoint, "POST", body);
   }
 
   async put<T>(
     endpoint: string,
-    body?: Record<string, unknown> | null
+    body?: RequestBody
   ): Promise<T> {
     return this.apiFetch<T>(endpoint, "PUT", body);
   }
 
   async delete<T>(
     endpoint: string,
-    body?: Record<string, unknown> | null
+    body?: RequestBody
   ): Promise<T> {
     return this.apiFetch<T>(endpoint, "DELETE", body);
   }
 
   async patch<T>(
     endpoint: string,
-    body?: Record<string, unknown> | null
+    body?: RequestBody
   ): Promise<T> {
     return this.apiFetch<T>(endpoint, "PATCH", body);
+  }
+
+  async getBlob(endpoint: string, retry = true): Promise<Blob> {
+    if (endpoint.startsWith("/")) {
+      endpoint = endpoint.slice(1);
+    }
+
+    const options = await this.createFetchOptions("GET");
+    const response = await fetch(`${this.url}/${endpoint}`, options);
+
+    if (!response.ok) {
+      if (response.status === 401 && retry) {
+        const refreshed = await this.tryRefreshToken();
+        if (refreshed) {
+          return this.getBlob(endpoint, false);
+        }
+      }
+
+      throw new HttpError(
+        response.status,
+        "BLOB_ERROR",
+        "Blob request failed",
+        {}
+      );
+    }
+
+    return response.blob();
   }
 
   private handleHttpError(error: HttpError): void {
@@ -203,7 +251,11 @@ export class Api {
 
     if (status === 403) {
       alert("アクセスが拒否されました");
-    } else if (status === 401 && window.location.pathname !== "/login") {
+    } else if (
+      status === 401 &&
+      (error.code.startsWith("AUTH_") || error.code.startsWith("REFRESH_")) &&
+      window.location.pathname !== "/login"
+    ) {
       window.location.replace("/login");
     }
   }
