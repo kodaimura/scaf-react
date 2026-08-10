@@ -242,9 +242,7 @@ export class Api {
     console.error(error);
     const status = error.status;
 
-    if (status === 403) {
-      alert("アクセスが拒否されました");
-    } else if (
+    if (
       status === 401 &&
       (error.code.startsWith("AUTH_") || error.code.startsWith("REFRESH_")) &&
       window.location.pathname !== "/login"

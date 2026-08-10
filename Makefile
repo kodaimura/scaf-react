@@ -1,10 +1,12 @@
 ENV ?= dev
+WEB_PORT ?= 3000
+SMOKE_BASE_URL ?= http://127.0.0.1:$(WEB_PORT)
 DOCKER_COMPOSE = docker compose
 DOCKER_COMPOSE_FILE = $(if $(filter prod,$(ENV)),-f docker-compose.prod.yml,-f docker-compose.yml)
 DOCKER_COMPOSE_CMD = $(DOCKER_COMPOSE) $(DOCKER_COMPOSE_FILE)
 RUN_WEB = $(DOCKER_COMPOSE_CMD) run --rm web
 
-.PHONY: up build build_no_cache down down_volumes stop in log logs ps reup restart install lint typecheck check format format_check audit audit_all outdated preview help
+.PHONY: up build build_no_cache down down_volumes stop in log logs ps reup restart install lint typecheck check format format_check smoke audit audit_all outdated preview help
 
 up:
 	$(DOCKER_COMPOSE_CMD) up -d
@@ -59,6 +61,9 @@ format:
 format_check:
 	$(RUN_WEB) npm run format:check
 
+smoke:
+	sh scripts/smoke.sh "$(SMOKE_BASE_URL)"
+
 audit:
 	$(RUN_WEB) npm audit --omit=dev
 
@@ -91,6 +96,7 @@ help:
 	@echo "  typecheck Run TypeScript check in Docker"
 	@echo "  check     Run lint and production build in Docker"
 	@echo "  format    Format files with Prettier in Docker"
+	@echo "  smoke     Check key routes on the running app"
 	@echo "  audit     Run production dependency audit in Docker"
 	@echo "  audit_all Run full dependency audit in Docker"
 	@echo "  outdated  Check outdated dependencies in Docker"

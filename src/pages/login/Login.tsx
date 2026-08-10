@@ -1,11 +1,11 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { api, HttpError } from "@lib/api";
 import { getApiErrorMessage } from "@lib/errorMessages";
 import { waitAtLeast, waitForProcessingPaint } from "@lib/loading";
 import { validateEmail, validateRequired } from "@lib/validation";
 import { useAuth } from "@contexts/AuthContext";
-import { ROUTES } from "@/routes";
+import { getSafeRedirectPath, REDIRECT_PARAM, ROUTES } from "@/routes";
 import { Button, ErrorMessage, FormField, Input, Processing } from "@ui/index";
 import type { Account } from "types/models";
 import styles from "@styles/pages/auth/auth.module.css";
@@ -18,6 +18,7 @@ interface LoginResponse {
 const Login: React.FC = () => {
   const { setAccount, setAccessToken } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,7 +52,9 @@ const Login: React.FC = () => {
 
       setAccount(res.account);
       setAccessToken(res.access_token);
-      navigate(ROUTES.dashboard);
+      navigate(getSafeRedirectPath(searchParams.get(REDIRECT_PARAM)), {
+        replace: true,
+      });
     } catch (err: unknown) {
       if (err instanceof HttpError && err.status === 401) {
         setError(

@@ -37,6 +37,7 @@ make check              # Run lint and production build
 make lint               # Run ESLint
 make typecheck          # Run TypeScript check
 make format             # Format with Prettier
+make smoke              # Check key routes on the running app
 make audit              # Audit production dependencies
 make outdated           # Check outdated dependencies
 ```

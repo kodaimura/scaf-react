@@ -4,9 +4,10 @@ import {
   Route,
   Navigate,
   Outlet,
+  useLocation,
 } from "react-router-dom";
 import { useAuth } from "@contexts/AuthContext";
-import { ROUTES } from "@/routes";
+import { buildLoginPathWithFrom, ROUTES } from "@/routes";
 import LayoutPublic from "@layouts/LayoutPublic";
 import LayoutPrivate from "@layouts/LayoutPrivate";
 import Processing from "@ui/Processing";
@@ -19,9 +20,12 @@ import NotFound from "@pages/notfound/NotFound";
 
 const PrivateRoute = () => {
   const { account, loading } = useAuth();
+  const location = useLocation();
+  const currentPath = `${location.pathname}${location.search}${location.hash}`;
 
   if (loading) return <Processing text="読み込み中..." />;
-  if (!account) return <Navigate to={ROUTES.login} replace />;
+  if (!account)
+    return <Navigate to={buildLoginPathWithFrom(currentPath)} replace />;
 
   return (
     <LayoutPrivate>
