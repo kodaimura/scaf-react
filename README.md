@@ -1,5 +1,11 @@
 # scaf-react
 
+Rename template identifiers after cloning directly:
+
+```sh
+bin/scaf-init my-app
+```
+
 React + TypeScript + Vite frontend template.
 
 This template assumes Docker-based development. Local Node.js is not required.
