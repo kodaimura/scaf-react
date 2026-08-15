@@ -1,8 +1,16 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import type { ReactNode } from "react";
 import type { Account } from "types/models";
 import { api } from "@lib/api";
+import type { GetCurrentAccountResponse } from "@/features/accounts/apiTypes";
 import { isPublicRoutePath } from "@/routes";
 
 interface AuthContextType {
@@ -21,7 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     setAccount(null);
     setAccessToken(null);
     try {
@@ -29,12 +37,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch {
       // keep local logout state even if the server request fails
     }
-  };
+  }, []);
 
   useEffect(() => {
     api.setAccessToken(accessToken);
-    api.setAccessTokenCallback(setAccessToken);
   }, [accessToken]);
+
+  useEffect(() => {
+    api.setAccessTokenCallback(setAccessToken);
+
+    return () => api.setAccessTokenCallback(undefined);
+  }, []);
 
   useEffect(() => {
     if (isPublicRoutePath(window.location.pathname)) {
@@ -43,7 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     const fetchAccount = async () => {
       try {
-        const res = await api.get<{ account: Account }>("/accounts/me");
+        const res = await api.get<GetCurrentAccountResponse>("/accounts/me");
         setAccount(res.account);
       } catch {
         setAccount(null);
@@ -54,20 +67,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     fetchAccount();
   }, []);
 
-  return (
-    <AuthContext.Provider
-      value={{
-        account,
-        accessToken,
-        setAccount,
-        setAccessToken,
-        logout,
-        loading,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo<AuthContextType>(
+    () => ({
+      account,
+      accessToken,
+      setAccount,
+      setAccessToken,
+      logout,
+      loading,
+    }),
+    [accessToken, account, loading, logout],
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

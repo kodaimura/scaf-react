@@ -5,16 +5,16 @@ import { api, HttpError } from "@lib/api";
 import { getApiErrorMessage } from "@lib/errorMessages";
 import { waitAtLeast, waitForProcessingPaint } from "@lib/loading";
 import {
-  PASSWORD_MIN_LENGTH,
   validatePasswordConfirmation,
   validateRequired,
 } from "@lib/validation";
+import type { ChangePasswordRequest } from "@/features/accounts/apiTypes";
 import { PASSWORD_CHANGED_PARAM, ROUTES } from "@/routes";
+import PasswordConfirmationFields from "@components/features/PasswordConfirmationFields";
 import {
   Button,
   ErrorMessage,
   FormField,
-  Help,
   PasswordInput,
   Processing,
 } from "@ui/index";
@@ -49,7 +49,7 @@ const ChangePassword: React.FC = () => {
     await waitForProcessingPaint();
 
     try {
-      await api.put("accounts/me/password", {
+      await api.put<void, ChangePasswordRequest>("accounts/me/password", {
         old_password: currentPassword,
         new_password: newPassword,
       });
@@ -97,45 +97,19 @@ const ChangePassword: React.FC = () => {
           />
         </FormField>
 
-        <FormField
-          htmlFor="new_password"
-          label={
-            <span className={styles.labelWithHelp}>
-              新しいパスワード
-              <Help
-                align="center"
-                text={`${PASSWORD_MIN_LENGTH}文字以上で入力してください。`}
-              />
-            </span>
+        <PasswordConfirmationFields
+          autoComplete="new-password"
+          confirmationLabel="新しいパスワード（確認）"
+          confirmationValue={confirmPassword}
+          onConfirmationChange={(event) =>
+            setConfirmPassword(event.target.value)
           }
-          required
-        >
-          <PasswordInput
-            autoComplete="new-password"
-            id="new_password"
-            minLength={PASSWORD_MIN_LENGTH}
-            name="new_password"
-            onChange={(event) => setNewPassword(event.target.value)}
-            required
-            value={newPassword}
-          />
-        </FormField>
-
-        <FormField
-          htmlFor="confirm_password"
-          label="新しいパスワード（確認）"
-          required
-        >
-          <PasswordInput
-            autoComplete="new-password"
-            id="confirm_password"
-            minLength={PASSWORD_MIN_LENGTH}
-            name="confirm_password"
-            onChange={(event) => setConfirmPassword(event.target.value)}
-            required
-            value={confirmPassword}
-          />
-        </FormField>
+          onPasswordChange={(event) => setNewPassword(event.target.value)}
+          passwordId="new_password"
+          passwordLabel="新しいパスワード"
+          passwordName="new_password"
+          passwordValue={newPassword}
+        />
 
         <Button
           className={styles.button}

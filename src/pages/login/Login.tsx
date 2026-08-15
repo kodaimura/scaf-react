@@ -11,6 +11,7 @@ import {
   REDIRECT_PARAM,
   ROUTES,
 } from "@/routes";
+import type { LoginRequest, LoginResponse } from "@/features/auth/apiTypes";
 import {
   Button,
   ErrorMessage,
@@ -20,13 +21,7 @@ import {
   PasswordInput,
   Processing,
 } from "@ui/index";
-import type { Account } from "types/models";
 import styles from "@styles/pages/auth/auth.module.css";
-
-interface LoginResponse {
-  account: Account;
-  access_token: string;
-}
 
 const Login: React.FC = () => {
   const { setAccount, setAccessToken } = useAuth();
@@ -59,7 +54,7 @@ const Login: React.FC = () => {
     await waitForProcessingPaint();
 
     try {
-      const res: LoginResponse = await api.post("auth/login", {
+      const res = await api.post<LoginResponse, LoginRequest>("auth/login", {
         login_id: email,
         password,
       });

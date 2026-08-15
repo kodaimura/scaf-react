@@ -25,6 +25,7 @@ export class HttpError extends Error {
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 type QueryValue = string | number | boolean | null | undefined;
+type QueryParams = Record<string, QueryValue>;
 type RequestBody = Record<string, unknown> | FormData | null;
 
 interface FetchOptions {
@@ -49,14 +50,14 @@ export class Api {
     this.accessToken = token;
   }
 
-  setAccessTokenCallback(callback: (token: string) => void) {
+  setAccessTokenCallback(callback?: (token: string) => void) {
     this.onAccessTokenRefresh = callback;
   }
 
-  private async createFetchOptions(
+  private createFetchOptions(
     method: HttpMethod,
     body?: RequestBody,
-  ): Promise<FetchOptions> {
+  ): FetchOptions {
     const headers: Record<string, string> = {};
 
     if (this.accessToken) {
@@ -79,57 +80,78 @@ export class Api {
     return options;
   }
 
+  private normalizeEndpoint(endpoint: string): string {
+    return endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
+  }
+
+  private async fetchWithTokenRefresh(
+    endpoint: string,
+    method: HttpMethod,
+    body?: RequestBody,
+    retry = true,
+  ): Promise<Response> {
+    const normalizedEndpoint = this.normalizeEndpoint(endpoint);
+    const response = await fetch(
+      `${this.url}/${normalizedEndpoint}`,
+      this.createFetchOptions(method, body),
+    );
+
+    const canRefresh =
+      response.status === 401 &&
+      retry &&
+      !normalizedEndpoint.endsWith("auth/login");
+
+    if (!canRefresh || !(await this.tryRefreshToken())) {
+      return response;
+    }
+
+    return this.fetchWithTokenRefresh(normalizedEndpoint, method, body, false);
+  }
+
+  private async createHttpError(response: Response): Promise<HttpError> {
+    let errorData: {
+      code?: string;
+      detail?: string;
+      message?: string;
+      details?: HttpErrorDetails;
+      errors?: HttpErrorDetails;
+    } = {
+      message: "Unknown error",
+      details: {},
+    };
+
+    try {
+      errorData = await response.json();
+    } catch {
+      // ignore parse error
+    }
+
+    return new HttpError(
+      response.status,
+      errorData.code || "UNKNOWN_ERROR",
+      errorData.message ||
+        errorData.code ||
+        errorData.detail ||
+        "Unknown error",
+      errorData.details || errorData.errors || {},
+    );
+  }
+
   private async apiFetch<T>(
     endpoint: string,
     method: HttpMethod,
     body?: RequestBody,
     retry = true,
   ): Promise<T> {
-    if (endpoint.startsWith("/")) {
-      endpoint = endpoint.slice(1);
-    }
-
-    const options = await this.createFetchOptions(method, body);
-    const response = await fetch(`${this.url}/${endpoint}`, options);
+    const response = await this.fetchWithTokenRefresh(
+      endpoint,
+      method,
+      body,
+      retry,
+    );
 
     if (!response.ok) {
-      if (
-        response.status === 401 &&
-        retry &&
-        !endpoint.endsWith("auth/login")
-      ) {
-        const refreshed = await this.tryRefreshToken();
-        if (refreshed) {
-          return this.apiFetch<T>(endpoint, method, body, false);
-        }
-      }
-
-      let errorData: {
-        code?: string;
-        detail?: string;
-        message?: string;
-        details?: HttpErrorDetails;
-        errors?: HttpErrorDetails;
-      } = {
-        message: "Unknown error",
-        details: {},
-      };
-
-      try {
-        errorData = await response.json();
-      } catch {
-        // ignore parse error
-      }
-
-      const error = new HttpError(
-        response.status,
-        errorData.code || "UNKNOWN_ERROR",
-        errorData.message ||
-          errorData.code ||
-          errorData.detail ||
-          "Unknown error",
-        errorData.details || errorData.errors || {},
-      );
+      const error = await this.createHttpError(response);
       this.handleHttpError(error);
       throw error;
     }
@@ -178,10 +200,10 @@ export class Api {
     return this.refreshPromise;
   }
 
-  async get<T>(
+  async get<TResponse = void, TParams extends QueryParams = QueryParams>(
     endpoint: string,
-    params?: Record<string, QueryValue> | null,
-  ): Promise<T> {
+    params?: TParams | null,
+  ): Promise<TResponse> {
     if (params && typeof params === "object") {
       const query = new URLSearchParams();
       Object.entries(params).forEach(([key, value]) => {
@@ -192,41 +214,46 @@ export class Api {
       const queryString = query.toString();
       if (queryString) endpoint += `?${queryString}`;
     }
-    return this.apiFetch<T>(endpoint, "GET");
+    return this.apiFetch<TResponse>(endpoint, "GET");
   }
 
-  async post<T>(endpoint: string, body?: RequestBody): Promise<T> {
-    return this.apiFetch<T>(endpoint, "POST", body);
+  async post<TResponse = void, TBody extends RequestBody = RequestBody>(
+    endpoint: string,
+    body?: TBody,
+  ): Promise<TResponse> {
+    return this.apiFetch<TResponse>(endpoint, "POST", body);
   }
 
-  async put<T>(endpoint: string, body?: RequestBody): Promise<T> {
-    return this.apiFetch<T>(endpoint, "PUT", body);
+  async put<TResponse = void, TBody extends RequestBody = RequestBody>(
+    endpoint: string,
+    body?: TBody,
+  ): Promise<TResponse> {
+    return this.apiFetch<TResponse>(endpoint, "PUT", body);
   }
 
-  async delete<T>(endpoint: string, body?: RequestBody): Promise<T> {
-    return this.apiFetch<T>(endpoint, "DELETE", body);
+  async delete<TResponse = void, TBody extends RequestBody = RequestBody>(
+    endpoint: string,
+    body?: TBody,
+  ): Promise<TResponse> {
+    return this.apiFetch<TResponse>(endpoint, "DELETE", body);
   }
 
-  async patch<T>(endpoint: string, body?: RequestBody): Promise<T> {
-    return this.apiFetch<T>(endpoint, "PATCH", body);
+  async patch<TResponse = void, TBody extends RequestBody = RequestBody>(
+    endpoint: string,
+    body?: TBody,
+  ): Promise<TResponse> {
+    return this.apiFetch<TResponse>(endpoint, "PATCH", body);
   }
 
   async getBlob(endpoint: string, retry = true): Promise<Blob> {
-    if (endpoint.startsWith("/")) {
-      endpoint = endpoint.slice(1);
-    }
-
-    const options = await this.createFetchOptions("GET");
-    const response = await fetch(`${this.url}/${endpoint}`, options);
+    const response = await this.fetchWithTokenRefresh(
+      endpoint,
+      "GET",
+      undefined,
+      retry,
+    );
 
     if (!response.ok) {
-      if (response.status === 401 && retry) {
-        const refreshed = await this.tryRefreshToken();
-        if (refreshed) {
-          return this.getBlob(endpoint, false);
-        }
-      }
-
       throw new HttpError(
         response.status,
         "BLOB_ERROR",

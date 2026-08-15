@@ -3,20 +3,14 @@ import { Link, useSearchParams } from "react-router-dom";
 import { api } from "@lib/api";
 import { getPasswordResetTokenErrorMessage } from "@lib/errorMessages";
 import { waitAtLeast, waitForProcessingPaint } from "@lib/loading";
-import {
-  PASSWORD_MIN_LENGTH,
-  validatePasswordConfirmation,
-} from "@lib/validation";
+import { validatePasswordConfirmation } from "@lib/validation";
+import type {
+  ResetPasswordRequest,
+  ResetPasswordVerifyParams,
+} from "@/features/auth/apiTypes";
 import { ROUTES } from "@/routes";
-import {
-  Button,
-  ErrorMessage,
-  FormField,
-  Help,
-  InfoMessage,
-  PasswordInput,
-  Processing,
-} from "@ui/index";
+import PasswordConfirmationFields from "@components/features/PasswordConfirmationFields";
+import { Button, ErrorMessage, InfoMessage, Processing } from "@ui/index";
 import styles from "@styles/pages/auth/auth.module.css";
 
 type VerificationState = "checking" | "valid" | "invalid";
@@ -44,7 +38,10 @@ const ResetPassword: React.FC = () => {
       }
 
       try {
-        await api.get("auth/reset-password/verify", { token });
+        await api.get<void, ResetPasswordVerifyParams>(
+          "auth/reset-password/verify",
+          { token },
+        );
         if (!active) return;
         setVerification("valid");
       } catch (err) {
@@ -80,7 +77,7 @@ const ResetPassword: React.FC = () => {
     await waitForProcessingPaint();
 
     try {
-      await api.post("auth/reset-password", {
+      await api.post<void, ResetPasswordRequest>("auth/reset-password", {
         token,
         new_password: password,
       });
@@ -122,43 +119,16 @@ const ResetPassword: React.FC = () => {
 
         {canSubmit && (
           <>
-            <FormField
-              htmlFor="password"
-              label={
-                <span className={styles.labelWithHelp}>
-                  新しいパスワード
-                  <Help
-                    align="center"
-                    text={`${PASSWORD_MIN_LENGTH}文字以上で入力してください。`}
-                  />
-                </span>
+            <PasswordConfirmationFields
+              confirmationLabel="新しいパスワード（確認）"
+              confirmationValue={confirmPassword}
+              onConfirmationChange={(event) =>
+                setConfirmPassword(event.target.value)
               }
-              required
-            >
-              <PasswordInput
-                id="password"
-                minLength={PASSWORD_MIN_LENGTH}
-                name="password"
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                value={password}
-              />
-            </FormField>
-
-            <FormField
-              htmlFor="confirm_password"
-              label="新しいパスワード（確認）"
-              required
-            >
-              <PasswordInput
-                id="confirm_password"
-                minLength={PASSWORD_MIN_LENGTH}
-                name="confirm_password"
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                value={confirmPassword}
-              />
-            </FormField>
+              onPasswordChange={(event) => setPassword(event.target.value)}
+              passwordLabel="新しいパスワード"
+              passwordValue={password}
+            />
 
             <Button
               className={styles.button}

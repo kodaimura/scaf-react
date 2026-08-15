@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { api } from "@lib/api";
 import { waitAtLeast, waitForProcessingPaint } from "@lib/loading";
 import { validateEmail } from "@lib/validation";
+import type { ForgotPasswordRequest } from "@/features/auth/apiTypes";
 import { ROUTES } from "@/routes";
 import {
   Button,
@@ -40,7 +41,9 @@ const ForgotPassword: React.FC = () => {
     await waitForProcessingPaint();
 
     try {
-      await api.post("auth/forgot-password", { email });
+      await api.post<void, ForgotPasswordRequest>("auth/forgot-password", {
+        email,
+      });
       setSent(true);
     } catch {
       setError("メール送信に失敗しました。もう一度お試しください。");

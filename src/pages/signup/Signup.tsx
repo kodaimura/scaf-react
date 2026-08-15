@@ -4,21 +4,14 @@ import { api, HttpError } from "@lib/api";
 import { getApiErrorMessage } from "@lib/errorMessages";
 import { waitAtLeast, waitForProcessingPaint } from "@lib/loading";
 import {
-  PASSWORD_MIN_LENGTH,
   validateEmail,
   validatePasswordConfirmation,
   validateRequired,
 } from "@lib/validation";
+import type { SignupRequest } from "@/features/auth/apiTypes";
 import { ROUTES } from "@/routes";
-import {
-  Button,
-  ErrorMessage,
-  FormField,
-  Help,
-  Input,
-  PasswordInput,
-  Processing,
-} from "@ui/index";
+import PasswordConfirmationFields from "@components/features/PasswordConfirmationFields";
+import { Button, ErrorMessage, FormField, Input, Processing } from "@ui/index";
 import styles from "@styles/pages/auth/auth.module.css";
 
 const Signup: React.FC = () => {
@@ -57,7 +50,7 @@ const Signup: React.FC = () => {
     await waitForProcessingPaint();
 
     try {
-      await api.post("auth/signup", {
+      await api.post<void, SignupRequest>("auth/signup", {
         login_id: email,
         first_name: firstName,
         last_name: lastName,
@@ -125,43 +118,14 @@ const Signup: React.FC = () => {
           />
         </FormField>
 
-        <FormField
-          htmlFor="password"
-          label={
-            <span className={styles.labelWithHelp}>
-              パスワード
-              <Help
-                align="center"
-                text={`${PASSWORD_MIN_LENGTH}文字以上で入力してください。`}
-              />
-            </span>
+        <PasswordConfirmationFields
+          confirmationValue={confirmPassword}
+          onConfirmationChange={(event) =>
+            setConfirmPassword(event.target.value)
           }
-          required
-        >
-          <PasswordInput
-            id="password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={PASSWORD_MIN_LENGTH}
-          />
-        </FormField>
-
-        <FormField
-          htmlFor="confirm_password"
-          label="パスワード（確認）"
-          required
-        >
-          <PasswordInput
-            id="confirm_password"
-            name="confirm_password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            minLength={PASSWORD_MIN_LENGTH}
-          />
-        </FormField>
+          onPasswordChange={(event) => setPassword(event.target.value)}
+          passwordValue={password}
+        />
 
         <Button
           type="submit"
