@@ -18,7 +18,7 @@ import {
   PasswordInput,
   Processing,
 } from "@ui/index";
-import styles from "@styles/pages/auth/auth.module.css";
+import styles from "@styles/pages/change-password/change-password.module.css";
 
 const ChangePassword: React.FC = () => {
   const navigate = useNavigate();
@@ -74,11 +74,7 @@ const ChangePassword: React.FC = () => {
   return (
     <div className={styles.container}>
       {loading && <Processing text="変更中..." />}
-      <form
-        className={[styles.form, styles.narrow].join(" ")}
-        noValidate
-        onSubmit={handleSubmit}
-      >
+      <form className={styles.form} noValidate onSubmit={handleSubmit}>
         <h1 className={styles.title}>パスワード変更</h1>
         <p className={styles.description}>
           変更後は、新しいパスワードで再度ログインしてください。

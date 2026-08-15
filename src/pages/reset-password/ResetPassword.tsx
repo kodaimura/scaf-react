@@ -11,7 +11,7 @@ import type {
 import { ROUTES } from "@/routes";
 import PasswordConfirmationFields from "@components/features/PasswordConfirmationFields";
 import { Button, ErrorMessage, InfoMessage, Processing } from "@ui/index";
-import styles from "@styles/pages/auth/auth.module.css";
+import styles from "@styles/pages/reset-password/reset-password.module.css";
 
 type VerificationState = "checking" | "valid" | "invalid";
 
@@ -99,11 +99,7 @@ const ResetPassword: React.FC = () => {
       {(loading || isTokenChecking) && (
         <Processing text={isTokenChecking ? "確認中..." : "更新中..."} />
       )}
-      <form
-        onSubmit={handleSubmit}
-        className={[styles.form, styles.narrow].join(" ")}
-        noValidate
-      >
+      <form onSubmit={handleSubmit} className={styles.form} noValidate>
         <h1 className={styles.title}>新しいパスワード</h1>
         <p className={styles.description}>
           メールに記載されたリンクから、新しいパスワードを設定します。

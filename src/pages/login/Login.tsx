@@ -21,7 +21,7 @@ import {
   PasswordInput,
   Processing,
 } from "@ui/index";
-import styles from "@styles/pages/auth/auth.module.css";
+import styles from "@styles/pages/login/login.module.css";
 
 const Login: React.FC = () => {
   const { setAccount, setAccessToken } = useAuth();
@@ -84,11 +84,7 @@ const Login: React.FC = () => {
   return (
     <div className={styles.container}>
       {loading && <Processing text="ログイン中..." />}
-      <form
-        onSubmit={handleSubmit}
-        className={[styles.form, styles.narrow].join(" ")}
-        noValidate
-      >
+      <form onSubmit={handleSubmit} className={styles.form} noValidate>
         <h1 className={styles.title}>ログイン</h1>
 
         {passwordChanged && (

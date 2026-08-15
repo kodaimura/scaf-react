@@ -12,7 +12,7 @@ import type { SignupRequest } from "@/features/auth/apiTypes";
 import { ROUTES } from "@/routes";
 import PasswordConfirmationFields from "@components/features/PasswordConfirmationFields";
 import { Button, ErrorMessage, FormField, Input, Processing } from "@ui/index";
-import styles from "@styles/pages/auth/auth.module.css";
+import styles from "@styles/pages/signup/signup.module.css";
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
@@ -76,11 +76,7 @@ const Signup: React.FC = () => {
   return (
     <div className={styles.container}>
       {loading && <Processing text="登録中..." />}
-      <form
-        onSubmit={handleSubmit}
-        className={[styles.form, styles.wide].join(" ")}
-        noValidate
-      >
+      <form onSubmit={handleSubmit} className={styles.form} noValidate>
         <h1 className={styles.title}>アカウント登録</h1>
 
         <ErrorMessage className={styles.message} message={error} />

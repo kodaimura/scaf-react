@@ -13,7 +13,7 @@ import {
   Input,
   Processing,
 } from "@ui/index";
-import styles from "@styles/pages/auth/auth.module.css";
+import styles from "@styles/pages/forgot-password/forgot-password.module.css";
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -56,11 +56,7 @@ const ForgotPassword: React.FC = () => {
   return (
     <div className={styles.container}>
       {loading && <Processing text="送信中..." />}
-      <form
-        onSubmit={handleSubmit}
-        className={[styles.form, styles.narrow].join(" ")}
-        noValidate
-      >
+      <form onSubmit={handleSubmit} className={styles.form} noValidate>
         <h1 className={styles.title}>パスワード再設定</h1>
         <p className={styles.description}>
           登録済みのメールアドレスへ再設定用リンクを送信します。
