@@ -11,7 +11,6 @@ import type { ReactNode } from "react";
 import type { Account } from "types/models";
 import { api } from "@lib/api";
 import type { GetCurrentAccountResponse } from "@/features/accounts/apiTypes";
-import { isPublicRoutePath } from "@/routes";
 
 interface AuthContextType {
   account: Account | null;
@@ -50,10 +49,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (isPublicRoutePath(window.location.pathname)) {
-      setLoading(false);
-      return;
-    }
     const fetchAccount = async () => {
       try {
         const res = await api.get<GetCurrentAccountResponse>("/accounts/me");

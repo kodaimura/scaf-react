@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { AlertCircle, AlertTriangle, Info, X } from "lucide-react";
 import styles from "@styles/ui/modal.module.css";
@@ -16,6 +16,15 @@ type Props = {
   title?: string;
 };
 
+const FOCUSABLE_SELECTOR = [
+  "a[href]",
+  "button:not([disabled])",
+  "input:not([disabled])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  '[tabindex]:not([tabindex="-1"])',
+].join(",");
+
 const Modal: React.FC<Props> = ({
   children,
   className,
@@ -26,22 +35,79 @@ const Modal: React.FC<Props> = ({
   onClose,
   title,
 }) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+  const titleId = useId();
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    if (isOpen) document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!isOpen) return;
 
+    const dialog = dialogRef.current;
+    const previouslyFocused =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
+    const getFocusableElements = () =>
+      dialog
+        ? Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
+        : [];
+
+    const frameId = window.requestAnimationFrame(() => {
+      const [firstFocusable] = getFocusableElements();
+      (firstFocusable ?? dialog)?.focus({ preventScroll: true });
+    });
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onCloseRef.current();
+        return;
+      }
+
+      if (event.key !== "Tab" || !dialog) return;
+
+      const focusableElements = getFocusableElements();
+      const firstFocusable = focusableElements[0];
+      const lastFocusable = focusableElements.at(-1);
+
+      if (!firstFocusable || !lastFocusable) {
+        event.preventDefault();
+        dialog.focus({ preventScroll: true });
+        return;
+      }
+
+      const activeElement = document.activeElement;
+      const focusIsOutside = !dialog.contains(activeElement);
+
+      if (
+        event.shiftKey &&
+        (activeElement === firstFocusable || focusIsOutside)
+      ) {
+        event.preventDefault();
+        lastFocusable.focus();
+      } else if (
+        !event.shiftKey &&
+        (activeElement === lastFocusable || focusIsOutside)
+      ) {
+        event.preventDefault();
+        firstFocusable.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
     return () => {
+      window.cancelAnimationFrame(frameId);
+      document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = prevOverflow;
+      previouslyFocused?.focus({ preventScroll: true });
     };
   }, [isOpen]);
 
@@ -62,13 +128,16 @@ const Modal: React.FC<Props> = ({
     ) : null;
 
   return createPortal(
-    <div
-      className={styles.overlay}
-      onClick={handleOverlayClick}
-      role="dialog"
-      aria-modal="true"
-    >
-      <div className={[styles.modal, className].filter(Boolean).join(" ")}>
+    <div className={styles.overlay} onClick={handleOverlayClick}>
+      <div
+        aria-label={title ? undefined : "ダイアログ"}
+        aria-labelledby={title ? titleId : undefined}
+        aria-modal="true"
+        className={[styles.modal, className].filter(Boolean).join(" ")}
+        ref={dialogRef}
+        role="dialog"
+        tabIndex={-1}
+      >
         <div className={styles.header}>
           <div className={styles.titleRow}>
             {icon && (
@@ -79,7 +148,11 @@ const Modal: React.FC<Props> = ({
                 {icon}
               </span>
             )}
-            {title && <div className={styles.title}>{title}</div>}
+            {title && (
+              <div className={styles.title} id={titleId}>
+                {title}
+              </div>
+            )}
           </div>
           <button
             className={styles.closeButton}

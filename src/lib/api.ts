@@ -180,14 +180,12 @@ export class Api {
 
         if (!response.ok) return false;
 
-        const newToken = (await response.json()).access_token;
-        if (newToken) {
-          this.accessToken = newToken;
+        const data = (await response.json()) as { access_token?: unknown };
+        const newToken = data.access_token;
+        if (typeof newToken !== "string" || !newToken) return false;
 
-          if (this.onAccessTokenRefresh) {
-            this.onAccessTokenRefresh(newToken);
-          }
-        }
+        this.accessToken = newToken;
+        this.onAccessTokenRefresh?.(newToken);
 
         return true;
       } catch {
