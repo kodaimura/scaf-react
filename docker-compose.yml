@@ -1,3 +1,5 @@
+name: scaf-react
+
 services:
   web:
     image: scaf-react-web-dev
