@@ -33,9 +33,10 @@ make down_volumes       # Stop containers and remove named volumes
 make log                # Follow web logs
 make in                 # Open sh in the web container
 
-make check              # Run lint and production build
+make check              # Run lint, tests, and production build
 make lint               # Run ESLint
 make typecheck          # Run TypeScript check
+make test               # Run unit tests
 make format             # Format with Prettier
 make smoke              # Check key routes on the running app
 make audit              # Audit production dependencies

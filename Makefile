@@ -6,7 +6,7 @@ DOCKER_COMPOSE_FILE = $(if $(filter prod,$(ENV)),-f docker-compose.prod.yml,-f d
 DOCKER_COMPOSE_CMD = $(DOCKER_COMPOSE) $(DOCKER_COMPOSE_FILE)
 RUN_WEB = $(DOCKER_COMPOSE_CMD) run --rm web
 
-.PHONY: up build build_no_cache down down_volumes stop in log logs ps reup restart install lint typecheck check format format_check smoke audit audit_all outdated preview help
+.PHONY: up build build_no_cache down down_volumes stop in log logs ps reup restart install lint typecheck test check format format_check smoke audit audit_all outdated preview help
 
 up:
 	$(DOCKER_COMPOSE_CMD) up -d
@@ -51,9 +51,11 @@ lint:
 typecheck:
 	$(RUN_WEB) npm run typecheck
 
+test:
+	$(RUN_WEB) npm run test
+
 check:
-	$(RUN_WEB) npm run lint
-	$(RUN_WEB) npm run build
+	$(RUN_WEB) npm run check
 
 format:
 	$(RUN_WEB) npm run format
@@ -94,7 +96,8 @@ help:
 	@echo "  install   Install npm dependencies in Docker"
 	@echo "  lint      Run ESLint in Docker"
 	@echo "  typecheck Run TypeScript check in Docker"
-	@echo "  check     Run lint and production build in Docker"
+	@echo "  test      Run unit tests in Docker"
+	@echo "  check     Run lint, tests, and production build in Docker"
 	@echo "  format    Format files with Prettier in Docker"
 	@echo "  smoke     Check key routes on the running app"
 	@echo "  audit     Run production dependency audit in Docker"
