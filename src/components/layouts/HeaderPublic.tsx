@@ -5,7 +5,7 @@ const HeaderPublic: React.FC = () => {
   return (
     <header className={styles.header}>
       <h1 className={styles.logo}>
-        <Link to="/">MyApp</Link>
+        <Link to="/">ScafReact</Link>
       </h1>
     </header>
   );

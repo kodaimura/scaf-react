@@ -43,7 +43,7 @@ const ForgotPassword: React.FC = () => {
       await api.post("auth/forgot-password", { email });
       setSent(true);
     } catch {
-      setError("メール送信に失敗しました。\nもう一度お試しください。");
+      setError("メール送信に失敗しました。もう一度お試しください。");
     } finally {
       await waitAtLeast(startedAt);
       setLoading(false);

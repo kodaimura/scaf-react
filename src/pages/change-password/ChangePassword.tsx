@@ -15,7 +15,7 @@ import {
   ErrorMessage,
   FormField,
   Help,
-  Input,
+  PasswordInput,
   Processing,
 } from "@ui/index";
 import styles from "@styles/pages/auth/auth.module.css";
@@ -64,7 +64,7 @@ const ChangePassword: React.FC = () => {
           getApiErrorMessage(err, "現在のパスワードを確認してください。"),
         );
       } else {
-        setError("パスワードの変更に失敗しました。\nもう一度お試しください。");
+        setError("パスワードの変更に失敗しました。もう一度お試しください。");
       }
       await waitAtLeast(startedAt);
       setLoading(false);
@@ -87,13 +87,12 @@ const ChangePassword: React.FC = () => {
         <ErrorMessage className={styles.message} message={error} />
 
         <FormField htmlFor="current_password" label="現在のパスワード" required>
-          <Input
+          <PasswordInput
             autoComplete="current-password"
             id="current_password"
             name="current_password"
             onChange={(event) => setCurrentPassword(event.target.value)}
             required
-            type="password"
             value={currentPassword}
           />
         </FormField>
@@ -111,14 +110,13 @@ const ChangePassword: React.FC = () => {
           }
           required
         >
-          <Input
+          <PasswordInput
             autoComplete="new-password"
             id="new_password"
             minLength={PASSWORD_MIN_LENGTH}
             name="new_password"
             onChange={(event) => setNewPassword(event.target.value)}
             required
-            type="password"
             value={newPassword}
           />
         </FormField>
@@ -128,14 +126,13 @@ const ChangePassword: React.FC = () => {
           label="新しいパスワード（確認）"
           required
         >
-          <Input
+          <PasswordInput
             autoComplete="new-password"
             id="confirm_password"
             minLength={PASSWORD_MIN_LENGTH}
             name="confirm_password"
             onChange={(event) => setConfirmPassword(event.target.value)}
             required
-            type="password"
             value={confirmPassword}
           />
         </FormField>

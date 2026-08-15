@@ -9,6 +9,7 @@ export { default as Input } from "./Input";
 export { default as KebabMenu } from "./KebabMenu";
 export { default as Loading } from "./Loading";
 export { default as Modal } from "./Modal";
+export { default as PasswordInput } from "./PasswordInput";
 export { default as Processing } from "./Processing";
 export { default as SectionHeader } from "./SectionHeader";
 export { default as Select } from "./Select";

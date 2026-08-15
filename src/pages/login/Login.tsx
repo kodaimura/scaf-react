@@ -17,6 +17,7 @@ import {
   FormField,
   InfoMessage,
   Input,
+  PasswordInput,
   Processing,
 } from "@ui/index";
 import type { Account } from "types/models";
@@ -77,7 +78,7 @@ const Login: React.FC = () => {
           ),
         );
       } else {
-        setError("ログインに失敗しました。\nもう一度お試しください。");
+        setError("ログインに失敗しました。もう一度お試しください。");
       }
     } finally {
       await waitAtLeast(startedAt);
@@ -101,10 +102,7 @@ const Login: React.FC = () => {
           </InfoMessage>
         )}
 
-        <ErrorMessage
-          className={[styles.message, styles.centerMessage].join(" ")}
-          message={error}
-        />
+        <ErrorMessage className={styles.message} message={error} />
 
         <FormField htmlFor="email" label="メールアドレス" required>
           <Input
@@ -118,9 +116,8 @@ const Login: React.FC = () => {
         </FormField>
 
         <FormField htmlFor="password" label="パスワード" required>
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

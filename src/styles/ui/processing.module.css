@@ -1,7 +1,7 @@
 .overlay {
   align-items: center;
-  background: rgba(15, 23, 42, 0.58);
-  backdrop-filter: blur(2px);
+  background: rgba(248, 250, 252, 0.46);
+  backdrop-filter: blur(1px);
   display: flex;
   flex-direction: column;
   inset: 0;
@@ -37,7 +37,7 @@
 }
 
 .text {
-  color: #fff;
+  color: #475569;
   font-size: 0.9rem;
   font-weight: 600;
   margin-top: 1rem;

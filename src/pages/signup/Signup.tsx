@@ -16,6 +16,7 @@ import {
   FormField,
   Help,
   Input,
+  PasswordInput,
   Processing,
 } from "@ui/index";
 import styles from "@styles/pages/auth/auth.module.css";
@@ -71,7 +72,7 @@ const Signup: React.FC = () => {
           getApiErrorMessage(err, "メールアドレスは既に登録されています。"),
         );
       } else {
-        setError("登録に失敗しました。\nもう一度お試しください。");
+        setError("登録に失敗しました。もう一度お試しください。");
       }
     } finally {
       await waitAtLeast(startedAt);
@@ -89,10 +90,7 @@ const Signup: React.FC = () => {
       >
         <h1 className={styles.title}>アカウント登録</h1>
 
-        <ErrorMessage
-          className={[styles.message, styles.centerMessage].join(" ")}
-          message={error}
-        />
+        <ErrorMessage className={styles.message} message={error} />
 
         <FormField htmlFor="last_name" label="姓" required>
           <Input
@@ -140,9 +138,8 @@ const Signup: React.FC = () => {
           }
           required
         >
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -156,9 +153,8 @@ const Signup: React.FC = () => {
           label="パスワード（確認）"
           required
         >
-          <Input
+          <PasswordInput
             id="confirm_password"
-            type="password"
             name="confirm_password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}

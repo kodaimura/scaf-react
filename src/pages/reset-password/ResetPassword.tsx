@@ -14,7 +14,7 @@ import {
   FormField,
   Help,
   InfoMessage,
-  Input,
+  PasswordInput,
   Processing,
 } from "@ui/index";
 import styles from "@styles/pages/auth/auth.module.css";
@@ -135,13 +135,12 @@ const ResetPassword: React.FC = () => {
               }
               required
             >
-              <Input
+              <PasswordInput
                 id="password"
                 minLength={PASSWORD_MIN_LENGTH}
                 name="password"
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                type="password"
                 value={password}
               />
             </FormField>
@@ -151,13 +150,12 @@ const ResetPassword: React.FC = () => {
               label="新しいパスワード（確認）"
               required
             >
-              <Input
+              <PasswordInput
                 id="confirm_password"
                 minLength={PASSWORD_MIN_LENGTH}
                 name="confirm_password"
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                type="password"
                 value={confirmPassword}
               />
             </FormField>
