@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
-import { LogOut, UserCircle } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { KeyRound, LogOut, UserCircle } from "lucide-react";
 import { useAuth } from "@contexts/AuthContext";
 import { KebabMenu } from "@ui/index";
+import { ROUTES } from "@/routes";
 import styles from "@styles/layouts/header.module.css";
 
 const HeaderPrivate: React.FC = () => {
+  const navigate = useNavigate();
   const { account, logout } = useAuth();
   const accountName = account
     ? `${account.last_name} ${account.first_name}`.trim()
@@ -21,6 +23,11 @@ const HeaderPrivate: React.FC = () => {
           ariaLabel="アカウントメニューを開く"
           icon={<UserCircle size={20} />}
           items={[
+            {
+              icon: <KeyRound size={16} />,
+              label: "パスワード変更",
+              onClick: () => navigate(ROUTES.changePassword),
+            },
             {
               icon: <LogOut size={16} />,
               label: "ログアウト",

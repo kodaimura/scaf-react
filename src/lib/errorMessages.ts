@@ -1,6 +1,7 @@
 import { HttpError } from "@lib/api";
 
 const API_ERROR_MESSAGES: Record<string, string> = {
+  CURRENT_PASSWORD_INCORRECT: "現在のパスワードが正しくありません。",
   EMAIL_ALREADY_EXISTS: "メールアドレスは既に登録されています。",
   INVALID_CREDENTIALS: "メールアドレスまたはパスワードが間違っています。",
   LOGIN_ID_ALREADY_EXISTS: "ログインIDは既に登録されています。",

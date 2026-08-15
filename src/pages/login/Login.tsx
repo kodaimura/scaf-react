@@ -5,8 +5,20 @@ import { getApiErrorMessage } from "@lib/errorMessages";
 import { waitAtLeast, waitForProcessingPaint } from "@lib/loading";
 import { validateEmail, validateRequired } from "@lib/validation";
 import { useAuth } from "@contexts/AuthContext";
-import { getSafeRedirectPath, REDIRECT_PARAM, ROUTES } from "@/routes";
-import { Button, ErrorMessage, FormField, Input, Processing } from "@ui/index";
+import {
+  getSafeRedirectPath,
+  PASSWORD_CHANGED_PARAM,
+  REDIRECT_PARAM,
+  ROUTES,
+} from "@/routes";
+import {
+  Button,
+  ErrorMessage,
+  FormField,
+  InfoMessage,
+  Input,
+  Processing,
+} from "@ui/index";
 import type { Account } from "types/models";
 import styles from "@styles/pages/auth/auth.module.css";
 
@@ -19,6 +31,7 @@ const Login: React.FC = () => {
   const { setAccount, setAccessToken } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const passwordChanged = searchParams.get(PASSWORD_CHANGED_PARAM) === "1";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -81,6 +94,12 @@ const Login: React.FC = () => {
         noValidate
       >
         <h1 className={styles.title}>ログイン</h1>
+
+        {passwordChanged && (
+          <InfoMessage className={styles.message}>
+            パスワードを変更しました。新しいパスワードでログインしてください。
+          </InfoMessage>
+        )}
 
         <ErrorMessage
           className={[styles.message, styles.centerMessage].join(" ")}

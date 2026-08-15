@@ -10,7 +10,7 @@ interface AuthContextType {
   accessToken: string | null;
   setAccount: (account: Account | null) => void;
   setAccessToken: (token: string | null) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   loading: boolean;
 }
 

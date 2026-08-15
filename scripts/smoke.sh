@@ -25,6 +25,7 @@ check_status() {
 
 check_status "/" "200"
 check_status "/login" "200"
+check_status "/change-password" "200"
 check_status "/forgot-password" "200"
 check_status "/reset-password?token=dummy" "200"
 check_status "/env.json" "200"

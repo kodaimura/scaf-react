@@ -15,6 +15,7 @@ import Login from "@pages/login/Login";
 import Signup from "@pages/signup/Signup";
 import ForgotPassword from "@pages/forgot-password/ForgotPassword";
 import ResetPassword from "@pages/reset-password/ResetPassword";
+import ChangePassword from "@pages/change-password/ChangePassword";
 import Dashboard from "@pages/dashboard/Dashboard";
 import NotFound from "@pages/notfound/NotFound";
 
@@ -60,6 +61,7 @@ const AppRouter: React.FC = () => {
 
         <Route element={<PrivateRoute />}>
           <Route path={ROUTES.home} element={<Dashboard />} />
+          <Route path={ROUTES.changePassword} element={<ChangePassword />} />
           <Route
             path={ROUTES.dashboard}
             element={<Navigate to={ROUTES.home} replace />}

@@ -1,4 +1,5 @@
 export const ROUTES = {
+  changePassword: "/change-password",
   dashboard: "/dashboard",
   forgotPassword: "/forgot-password",
   home: "/",
@@ -15,6 +16,7 @@ export const PUBLIC_ROUTE_PATHS = [
 ] as const;
 
 export const REDIRECT_PARAM = "from";
+export const PASSWORD_CHANGED_PARAM = "password_changed";
 
 export const isPublicRoutePath = (pathname: string) =>
   PUBLIC_ROUTE_PATHS.some((path) => path === pathname);
