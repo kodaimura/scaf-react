@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { api } from "@lib/api";
+import { useAuth } from "@contexts/AuthContext";
 import { getPasswordResetTokenErrorMessage } from "@lib/errorMessages";
 import { waitAtLeast, waitForProcessingPaint } from "@lib/loading";
 import { validatePasswordConfirmation } from "@lib/validation";
@@ -16,6 +17,7 @@ import styles from "@styles/pages/reset-password/reset-password.module.css";
 type VerificationState = "checking" | "valid" | "invalid";
 
 const ResetPassword: React.FC = () => {
+  const { setAccount, setAccessToken } = useAuth();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") ?? "";
 
@@ -81,6 +83,8 @@ const ResetPassword: React.FC = () => {
         token,
         new_password: password,
       });
+      setAccount(null);
+      setAccessToken(null);
       setSucceeded(true);
     } catch (err) {
       setError(getPasswordResetTokenErrorMessage(err));

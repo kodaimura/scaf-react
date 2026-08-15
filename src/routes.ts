@@ -15,11 +15,20 @@ export const PUBLIC_ROUTE_PATHS = [
   ROUTES.resetPassword,
 ] as const;
 
+export const PRIVATE_ROUTE_PATHS = [
+  ROUTES.home,
+  ROUTES.dashboard,
+  ROUTES.changePassword,
+] as const;
+
 export const REDIRECT_PARAM = "from";
 export const PASSWORD_CHANGED_PARAM = "password_changed";
 
 export const isPublicRoutePath = (pathname: string) =>
   PUBLIC_ROUTE_PATHS.some((path) => path === pathname);
+
+export const isPrivateRoutePath = (pathname: string) =>
+  PRIVATE_ROUTE_PATHS.some((path) => path === pathname);
 
 export const buildLoginPathWithFrom = (from: string) => {
   const params = new URLSearchParams({ [REDIRECT_PARAM]: from });

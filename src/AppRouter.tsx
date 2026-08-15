@@ -35,12 +35,16 @@ const PrivateRoute = () => {
   );
 };
 
-const PublicRoute = () => {
+const GuestRoute = () => {
   const { account, loading } = useAuth();
 
   if (loading) return <Processing text="読み込み中..." />;
   if (account) return <Navigate to={ROUTES.dashboard} replace />;
 
+  return <Outlet />;
+};
+
+const PublicLayoutRoute = () => {
   return (
     <LayoutPublic>
       <Outlet />
@@ -52,10 +56,12 @@ const AppRouter: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<PublicRoute />}>
-          <Route path={ROUTES.login} element={<Login />} />
-          <Route path={ROUTES.signup} element={<Signup />} />
-          <Route path={ROUTES.forgotPassword} element={<ForgotPassword />} />
+        <Route element={<PublicLayoutRoute />}>
+          <Route element={<GuestRoute />}>
+            <Route path={ROUTES.login} element={<Login />} />
+            <Route path={ROUTES.signup} element={<Signup />} />
+            <Route path={ROUTES.forgotPassword} element={<ForgotPassword />} />
+          </Route>
           <Route path={ROUTES.resetPassword} element={<ResetPassword />} />
         </Route>
 

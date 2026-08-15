@@ -14,6 +14,7 @@ import {
 import {
   buildLoginPathWithFrom,
   getSafeRedirectPath,
+  isPrivateRoutePath,
   isPublicRoutePath,
   ROUTES,
 } from "@/routes";
@@ -48,12 +49,16 @@ describe("authentication validation", () => {
 });
 
 describe("application routes", () => {
-  it("identifies every public authentication route", () => {
+  it("classifies every public and private route", () => {
     expect(isPublicRoutePath(ROUTES.login)).toBe(true);
     expect(isPublicRoutePath(ROUTES.signup)).toBe(true);
     expect(isPublicRoutePath(ROUTES.forgotPassword)).toBe(true);
     expect(isPublicRoutePath(ROUTES.resetPassword)).toBe(true);
     expect(isPublicRoutePath(ROUTES.dashboard)).toBe(false);
+    expect(isPrivateRoutePath(ROUTES.home)).toBe(true);
+    expect(isPrivateRoutePath(ROUTES.dashboard)).toBe(true);
+    expect(isPrivateRoutePath(ROUTES.changePassword)).toBe(true);
+    expect(isPrivateRoutePath(ROUTES.resetPassword)).toBe(false);
   });
 
   it("builds and accepts safe internal redirects", () => {
