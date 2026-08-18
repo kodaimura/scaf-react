@@ -46,9 +46,9 @@ Document references and commands, but never credentials or secret values.
    ```
 
 4. Review dependency audit results when dependencies changed or the release
-requires a security review.
+   requires a security review.
 5. Confirm required environment variables and secrets exist without displaying
-their values.
+   their values.
 6. Confirm runtime configuration and backend API compatibility.
 7. Identify the previous known-good artifact or revision.
 
@@ -83,5 +83,3 @@ changes or perform destructive recovery. After rollback, repeat verification.
 
 Record the environment, requested and actual revision, timing, failed checks,
 sanitized logs, user and data impact, mitigation, and follow-up work.
-
-```
