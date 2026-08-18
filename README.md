@@ -20,6 +20,9 @@ make init
 `make init PROJECT_NAME=another-name`. webscaf runs the same initialization
 automatically. Skip initialization only when developing this scaffold itself.
 
+After pushing a new repository to GitHub, complete the one-time
+[`docs/GITHUB_SETTINGS.md`](docs/GITHUB_SETTINGS.md) checklist.
+
 This template assumes Docker-based development. Local Node.js is not required.
 
 ## Setup
@@ -52,6 +55,7 @@ make log                # Follow web logs
 make in                 # Open sh in the web container
 
 make check              # Run lint, tests, and production build
+make build_prod         # Build the production container image
 make lint               # Run ESLint
 make typecheck          # Run TypeScript check
 make test               # Run unit tests
@@ -60,6 +64,13 @@ make smoke              # Check key routes on the running app
 make audit              # Audit production dependencies
 make outdated           # Check outdated dependencies
 ```
+
+Read [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) before changing routes,
+pages, shared components, authentication state, or API infrastructure. Pull
+requests run the same checks in GitHub Actions; see
+[`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md),
+[`docs/SECURITY.md`](docs/SECURITY.md), and
+[`docs/RUNBOOK.md`](docs/RUNBOOK.md).
 
 ## Production Build
 

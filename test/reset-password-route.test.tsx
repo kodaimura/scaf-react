@@ -47,9 +47,7 @@ describe("reset password route", () => {
     ).toBeInTheDocument();
     await waitFor(() =>
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining(
-          "auth/reset-password/verify?token=reset-token",
-        ),
+        expect.stringContaining("auth/reset-password/verify?token=reset-token"),
         expect.any(Object),
       ),
     );

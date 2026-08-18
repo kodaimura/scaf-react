@@ -7,7 +7,7 @@ DOCKER_COMPOSE_FILE = $(if $(filter prod,$(ENV)),-f docker-compose.prod.yml,-f d
 DOCKER_COMPOSE_CMD = $(DOCKER_COMPOSE) $(DOCKER_COMPOSE_FILE)
 RUN_WEB = $(DOCKER_COMPOSE_CMD) run --rm web
 
-.PHONY: init up build build_no_cache down down_volumes stop in log logs ps reup restart install lint typecheck test check format format_check smoke audit audit_all outdated preview help
+.PHONY: init up build build_no_cache build_prod down down_volumes stop in log logs ps reup restart install lint typecheck test check format format_check smoke audit audit_all outdated preview help
 
 init:
 	./bin/scaf-init "$(PROJECT_NAME)"
@@ -20,6 +20,9 @@ build:
 
 build_no_cache:
 	$(DOCKER_COMPOSE_CMD) build --no-cache
+
+build_prod:
+	docker build --file Dockerfile.prod --tag "$(PROJECT_NAME)-web-prod" .
 
 down:
 	$(DOCKER_COMPOSE_CMD) down
@@ -90,6 +93,7 @@ help:
 	@echo "  up        Start containers in the specified environment (default: dev)"
 	@echo "  build     Build containers"
 	@echo "  build_no_cache Build containers without cache"
+	@echo "  build_prod Build the production web image"
 	@echo "  down      Stop and remove containers and networks"
 	@echo "  down_volumes Stop and remove containers, networks, and volumes"
 	@echo "  stop      Stop containers"
